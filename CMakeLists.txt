@@ -7,4 +7,4 @@ find_package(GLEW 2.2 REQUIRED)
 
 add_executable(OpenGLProject main.cpp)
 
-target_link_libraries(OpenGLProject PRIVATE OpenGL::GL glfw)
+target_link_libraries(OpenGLProject PRIVATE OpenGL::GL glfw GLEW::GLEW)
