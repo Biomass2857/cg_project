@@ -1,5 +1,4 @@
 #include <GL/glew.h>
-#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #ifdef __linux__
@@ -9,12 +8,12 @@
 #endif
 
 int main() {
-    if(!glfwInit()) {
+    if (!glfwInit()) {
         return -1;
     }
 
     GLFWwindow* window = glfwCreateWindow(800, 600, "OpenGL Project", NULL, NULL);
-    if(!window) {
+    if (!window) {
         glfwTerminate();
         return -1;
     }
