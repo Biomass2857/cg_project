@@ -1,7 +1,13 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <OpenGL/gl.h>
 #include <string>
+#ifdef __APPLE__
+#include <OpenGL/gl.h>
+#ifdef __linux__
+#include <GL/gl.h>
+#elif _WIN32
+#include <GL/gl.h>
+#endif
 
 const char* vertexShaderSource = "#version 330 core\
     layout (location = 0) in vec3 aPos;\
@@ -22,7 +28,7 @@ const char* fragmentShaderSource = "#version 330 core\
     }";
 
 int main() {
-    if(!glfwInit()) {
+    if (!glfwInit()) {
         return -1;
     }
 
