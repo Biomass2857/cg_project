@@ -1,9 +1,10 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <string>
+
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
-#ifdef __linux__
+#elif __linux__
 #include <GL/gl.h>
 #elif _WIN32
 #include <GL/gl.h>
