@@ -1,6 +1,11 @@
-#include <OpenGL/gl3.h>
-#include <GLFW/glfw3.h>
 #include <GL/glew.h>
+#include <GLFW/glfw3.h>
+
+#ifdef __linux__
+#include <GL/gl.h>
+#elif _WIN32
+#include <GL/gl.h>  // You might need to adjust this depending on your setup
+#endif
 
 int main() {
     if(!glfwInit()) {
@@ -15,7 +20,13 @@ int main() {
 
     glfwMakeContextCurrent(window);
 
-    while(!glfwWindowShouldClose(window)) {
+    // GLEW initialization
+    if (glewInit() != GLEW_OK) {
+        glfwTerminate();
+        return -1;
+    }
+
+    while (!glfwWindowShouldClose(window)) {
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
