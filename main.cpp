@@ -29,17 +29,13 @@ const char* fragmentShaderSource = "#version 330 core\
     }";
 
 int main() {
-    if (!glfwInit()) {
+    if(!glfwInit()) {
         return -1;
     }
 
-    if(glewInit() != GLEW_OK) {
-        return -1;
-    }
-
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    // glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    // glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    // glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     GLFWwindow* window = glfwCreateWindow(800, 600, "OpenGL Project", nullptr, nullptr);
     if(!window) {
@@ -86,6 +82,11 @@ int main() {
     glBindVertexArray(0);
 
     glfwMakeContextCurrent(window);
+
+    if(glewInit() != GLEW_OK) {
+        glfwTerminate();
+        return -1;
+    }
 
     while(!glfwWindowShouldClose(window)) {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
