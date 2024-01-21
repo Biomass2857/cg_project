@@ -66,14 +66,10 @@ int main() {
         -len, -len, len, 1.0f, 0.0f, 0.0f,
         len, -len, len, 1.0f, 0.0f, 0.0f,
         -len, len, len, 1.0f, 0.0f, 0.0f,
-        -len, len, len, 1.0f, 0.0f, 0.0f,
         len, len, len, 1.0f, 0.0f, 0.0f,
-        len, -len, len, 1.0f, 0.0f, 0.0f,
 
         // right face
         len, -len, len, 0.0f, 1.0f, 0.0f,
-        len, -len, -len, 0.0f, 1.0f, 0.0f,
-        len, len, len, 0.0f, 1.0f, 0.0f,
         len, len, len, 0.0f, 1.0f, 0.0f,
         len, len, -len, 0.0f, 1.0f, 0.0f,
         len, -len, -len, 0.0f, 1.0f, 0.0f,
@@ -82,33 +78,25 @@ int main() {
         -len, -len, -len, 0.5f, 0.0f, 0.5f,
         len, -len, -len, 0.5f, 0.0f, 0.5f,
         -len, len, -len, 0.5f, 0.0f, 0.5f,
-        -len, len, -len, 0.5f, 0.0f, 0.5f,
         len, len, -len, 0.5f, 0.0f, 0.5f,
-        len, -len, -len, 0.5f, 0.0f, 0.5f,
 
         // left face
         -len, -len, len, 0.0f, 0.0f, 1.0f,
         -len, -len, -len, 0.0f, 0.0f, 1.0f,
         -len, len, len, 0.0f, 0.0f, 1.0f,
-        -len, len, len, 0.0f, 0.0f, 1.0f,
         -len, len, -len, 0.0f, 0.0f, 1.0f,
-        -len, -len, -len, 0.0f, 0.0f, 1.0f,
 
         // top face
         -len, len, len, 1.0f, 1.0f, 0.0f,
         len, len, len, 1.0f, 1.0f, 0.0f,
         -len, len, -len, 1.0f, 1.0f, 0.0f,
-        -len, len, -len, 1.0f, 1.0f, 0.0f,
         len, len, -len, 1.0f, 1.0f, 0.0f,
-        len, len, len, 1.0f, 1.0f, 0.0f,
 
         // bottom face
         -len, -len, len, 0.0f, 1.0f, 1.0f,
         len, -len, len, 0.0f, 1.0f, 1.0f,
         -len, -len, -len, 0.0f, 1.0f, 1.0f,
-        -len, -len, -len, 0.0f, 1.0f, 1.0f,
-        len, -len, -len, 0.0f, 1.0f, 1.0f,
-        len, -len, len, 0.0f, 1.0f, 1.0f
+        len, -len, -len, 0.0f, 1.0f, 1.0f
     };
 
     unsigned int VAO, VBO;
@@ -129,6 +117,38 @@ int main() {
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+
+    unsigned short indices[] = {
+        // front face
+        0, 1, 2,
+        1, 2, 3,
+
+        // right face
+        4, 5, 6,
+        5, 6, 7,
+
+        // back face
+        8, 9, 10,
+        9, 10, 11,
+
+        // left face
+        12, 13, 14,
+        13, 14, 15,
+
+        // top face
+        16, 17, 18,
+        17, 18, 19,
+
+        // bottom face
+        20, 21, 22,
+        21, 22, 23
+    };
+
+    unsigned int IBO;
+    glGenBuffers(1, &IBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     std::string vertexShaderSourceString = readFileToString("../shader/shader.vert");
     std::string fragmentShaderSourceString = readFileToString("../shader/shader.frag");
@@ -190,6 +210,7 @@ int main() {
         glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "rotXMatrix"), 1, GL_FALSE, rotXMatrix);
         glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "rotYMatrix"), 1, GL_FALSE, rotYMatrix);
         glBindVertexArray(VAO);
+
         glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / sizeof(float));
         glBindVertexArray(0);
 
