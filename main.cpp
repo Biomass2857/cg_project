@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <vector>
 
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
@@ -28,14 +29,6 @@ std::string readFileToString(const std::string& filename) {
     return ss.str();
 }
 
-const char* fragmentShaderSource = "#version 330 core\
-    in vec3 color;\
-    out vec4 FragColor;\
-    void main()\
-    {\
-        FragColor = vec4(color, 1.0);\
-    }";
-
 void errorCallback(int iError, const char* pcDescription) {
     std::cerr << "GLFW Error: " + std::to_string(iError) + " " + std::string(pcDescription) << std::endl;
 }
@@ -54,7 +47,7 @@ int main() {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     #endif
     
-    GLFWwindow* window = glfwCreateWindow(800, 600, "OpenGL Project", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(600, 600, "OpenGL Project", nullptr, nullptr);
     if(!window) {
         glfwTerminate();
         return -1;
@@ -67,16 +60,17 @@ int main() {
         return -1;
     }
 
+    float len = 0.5f;
     float vertices[] = {
-        // positions          // colors
-        -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f, // front face
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f, // right face
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,
-         // ... (repeat for other faces)
+        -len, -len, len, 1.0f, 0.0f, 0.0f,
+        len, -len, len, 1.0f, 0.0f, 0.0f,
+        -len, len, len, 1.0f, 0.0f, 0.0f,
+        -len, len, len, 0.0f, 1.0f, 0.0f,
+        len, len, len, 0.0f, 1.0f, 0.0f,
+        len, -len, len, 0.0f, 1.0f, 0.0f
     };
+
+
 
     unsigned int VAO, VBO;
     glGenVertexArrays(1, &VAO);
@@ -111,14 +105,26 @@ int main() {
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
+    float theta = 0.5f;
+    float rotMatrix[16] = {
+        cos(theta), -sin(theta), 0.0f, 0.0f,
+        sin(theta), cos(theta), 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    };
+
+    glUseProgram(shaderProgram);
     while(!glfwWindowShouldClose(window)) {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glUseProgram(shaderProgram);
+        glPushMatrix();
+        glRotatef(0.1f, 0.0f, 0.0f, 1.0f);
+        glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "transformationMatrix"), 1, GL_FALSE, rotMatrix);
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / sizeof(float));
         glBindVertexArray(0);
+        glPopMatrix();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
