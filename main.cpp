@@ -67,7 +67,14 @@ int main() {
         -len, len, len, 1.0f, 0.0f, 0.0f,
         -len, len, len, 0.0f, 1.0f, 0.0f,
         len, len, len, 0.0f, 1.0f, 0.0f,
-        len, -len, len, 0.0f, 1.0f, 0.0f
+        len, -len, len, 0.0f, 1.0f, 0.0f,
+
+        -len, -len, -len, 0.5f, 0.2f, 0.0f,
+        len, -len, -len, 0.5f, 0.2f, 0.0f,
+        -len, len, -len, 0.5f, 0.2f, 0.0f,
+        -len, len, -len, 0.0f, 0.0f, 1.0f,
+        len, len, -len, 0.0f, 0.0f, 1.0f,
+        len, -len, -len, 0.0f, 0.0f, 1.0f
     };
 
     unsigned int VAO, VBO;
@@ -117,9 +124,9 @@ int main() {
 
         theta += 0.01f;
         float rotMatrix[16] = {
-            cos(theta), -sin(theta), 0.0f, 0.0f,
-            sin(theta), cos(theta), 0.0f, 0.0f,
-            0.0f, 0.0f, 1.0f, 0.0f,
+            cos(theta), 0.0f, -sin(theta), 0.0f,
+            0.0f, 1.0f, 0.0f, 0.0f,
+            sin(theta), 0.0f, cos(theta), 0.0f,
             0.0f, 0.0f, 0.0f, 1.0f
         };
 
