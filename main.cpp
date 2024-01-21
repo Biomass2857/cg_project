@@ -71,8 +71,8 @@ int main() {
         // right face
         len, -len, len, 0.0f, 1.0f, 0.0f,
         len, len, len, 0.0f, 1.0f, 0.0f,
-        len, len, -len, 0.0f, 1.0f, 0.0f,
         len, -len, -len, 0.0f, 1.0f, 0.0f,
+        len, len, -len, 0.0f, 1.0f, 0.0f,
 
         // back face
         -len, -len, -len, 0.5f, 0.0f, 0.5f,
@@ -148,7 +148,6 @@ int main() {
     glGenBuffers(1, &IBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     std::string vertexShaderSourceString = readFileToString("../shader/shader.vert");
     std::string fragmentShaderSourceString = readFileToString("../shader/shader.frag");
@@ -210,9 +209,12 @@ int main() {
         glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "rotXMatrix"), 1, GL_FALSE, rotXMatrix);
         glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "rotYMatrix"), 1, GL_FALSE, rotYMatrix);
         glBindVertexArray(VAO);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 
-        glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / sizeof(float));
+        glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(unsigned short), GL_UNSIGNED_SHORT, nullptr);
+        // glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices)/sizeof(float));
         glBindVertexArray(0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
