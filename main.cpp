@@ -62,19 +62,53 @@ int main() {
 
     float len = 0.5f;
     float vertices[] = {
+        // front face
         -len, -len, len, 1.0f, 0.0f, 0.0f,
         len, -len, len, 1.0f, 0.0f, 0.0f,
         -len, len, len, 1.0f, 0.0f, 0.0f,
-        -len, len, len, 0.0f, 1.0f, 0.0f,
-        len, len, len, 0.0f, 1.0f, 0.0f,
-        len, -len, len, 0.0f, 1.0f, 0.0f,
+        -len, len, len, 1.0f, 0.0f, 0.0f,
+        len, len, len, 1.0f, 0.0f, 0.0f,
+        len, -len, len, 1.0f, 0.0f, 0.0f,
 
-        -len, -len, -len, 0.5f, 0.2f, 0.0f,
-        len, -len, -len, 0.5f, 0.2f, 0.0f,
-        -len, len, -len, 0.5f, 0.2f, 0.0f,
+        // right face
+        len, -len, len, 0.0f, 1.0f, 0.0f,
+        len, -len, -len, 0.0f, 1.0f, 0.0f,
+        len, len, len, 0.0f, 1.0f, 0.0f,
+        len, len, len, 0.0f, 1.0f, 0.0f,
+        len, len, -len, 0.0f, 1.0f, 0.0f,
+        len, -len, -len, 0.0f, 1.0f, 0.0f,
+
+        // back face
+        -len, -len, -len, 0.5f, 0.0f, 0.5f,
+        len, -len, -len, 0.5f, 0.0f, 0.5f,
+        -len, len, -len, 0.5f, 0.0f, 0.5f,
+        -len, len, -len, 0.5f, 0.0f, 0.5f,
+        len, len, -len, 0.5f, 0.0f, 0.5f,
+        len, -len, -len, 0.5f, 0.0f, 0.5f,
+
+        // left face
+        -len, -len, len, 0.0f, 0.0f, 1.0f,
+        -len, -len, -len, 0.0f, 0.0f, 1.0f,
+        -len, len, len, 0.0f, 0.0f, 1.0f,
+        -len, len, len, 0.0f, 0.0f, 1.0f,
         -len, len, -len, 0.0f, 0.0f, 1.0f,
-        len, len, -len, 0.0f, 0.0f, 1.0f,
-        len, -len, -len, 0.0f, 0.0f, 1.0f
+        -len, -len, -len, 0.0f, 0.0f, 1.0f,
+
+        // top face
+        -len, len, len, 1.0f, 1.0f, 0.0f,
+        len, len, len, 1.0f, 1.0f, 0.0f,
+        -len, len, -len, 1.0f, 1.0f, 0.0f,
+        -len, len, -len, 1.0f, 1.0f, 0.0f,
+        len, len, -len, 1.0f, 1.0f, 0.0f,
+        len, len, len, 1.0f, 1.0f, 0.0f,
+
+        // bottom face
+        -len, -len, len, 0.0f, 1.0f, 1.0f,
+        len, -len, len, 0.0f, 1.0f, 1.0f,
+        -len, -len, -len, 0.0f, 1.0f, 1.0f,
+        -len, -len, -len, 0.0f, 1.0f, 1.0f,
+        len, -len, -len, 0.0f, 1.0f, 1.0f,
+        len, -len, len, 0.0f, 1.0f, 1.0f
     };
 
     unsigned int VAO, VBO;
@@ -117,6 +151,8 @@ int main() {
     glDeleteShader(fragmentShader);
 
     float theta = 0.5f;
+    float phi = 0.35f;
+    float gamma = 0.0f;
 
     glUseProgram(shaderProgram);
 
@@ -127,14 +163,32 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         theta += 0.01f;
-        float rotMatrix[16] = {
+        phi += 0.007f;
+        gamma += 0.0001f;
+        float rotZMatrix[16] = {
             cos(theta), 0.0f, -sin(theta), 0.0f,
             0.0f, 1.0f, 0.0f, 0.0f,
             sin(theta), 0.0f, cos(theta), 0.0f,
             0.0f, 0.0f, 0.0f, 1.0f
         };
+        
+        float rotXMatrix[16] = {
+            cos(theta), -sin(theta), 0.0f, 0.0f,
+            sin(theta), cos(theta), 0.0f, 0.0f,
+            0.0f, 0.0f, 1, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f
+        };
 
-        glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "transformationMatrix"), 1, GL_FALSE, rotMatrix);
+        float rotYMatrix[16] = {
+            1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, cos(gamma), -sin(gamma), 0.0f,
+            0.0f, sin(gamma), cos(gamma), 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f
+        };
+
+        glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "rotZMatrix"), 1, GL_FALSE, rotZMatrix);
+        glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "rotXMatrix"), 1, GL_FALSE, rotXMatrix);
+        glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "rotYMatrix"), 1, GL_FALSE, rotYMatrix);
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / sizeof(float));
         glBindVertexArray(0);
