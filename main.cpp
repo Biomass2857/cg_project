@@ -106,25 +106,23 @@ int main() {
     glDeleteShader(fragmentShader);
 
     float theta = 0.5f;
-    float rotMatrix[16] = {
-        cos(theta), -sin(theta), 0.0f, 0.0f,
-        sin(theta), cos(theta), 0.0f, 0.0f,
-        0.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f
-    };
-
     glUseProgram(shaderProgram);
     while(!glfwWindowShouldClose(window)) {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glPushMatrix();
-        glRotatef(0.1f, 0.0f, 0.0f, 1.0f);
+        theta += 0.01f;
+        float rotMatrix[16] = {
+            cos(theta), -sin(theta), 0.0f, 0.0f,
+            sin(theta), cos(theta), 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f
+        };
+
         glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "transformationMatrix"), 1, GL_FALSE, rotMatrix);
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / sizeof(float));
         glBindVertexArray(0);
-        glPopMatrix();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
