@@ -2,6 +2,8 @@
 #include <GLFW/glfw3.h>
 #include <string>
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
@@ -11,15 +13,20 @@
 #include <GL/gl.h>
 #endif
 
-const char* vertexShaderSource = "#version 330 core\
-    layout (location = 0) in vec3 aPos;\
-    layout (location = 1) in vec3 aColor;\
-    out vec3 color;\
-    void main()\
-    { \
-        color = aColor;\
-        gl_Position = vec4(aPos, 1.0);\
-    }";
+std::string readFileToString(const std::string& filename) {
+    std::ifstream file;
+    std::stringstream ss;
+
+    file.open(filename);
+    if(file.is_open()) {
+        ss << file.rdbuf();
+        file.close();
+    } else {
+        std::cerr <<"Unable to open file: "<< filename << std::endl;
+    }
+    
+    return ss.str();
+}
 
 const char* fragmentShaderSource = "#version 330 core\
     in vec3 color;\
@@ -83,6 +90,12 @@ int main() {
     glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+
+    std::string vertexShaderSourceString = readFileToString("../shader/shader.vert");
+    std::string fragmentShaderSourceString = readFileToString("../shader/shader.frag");
+
+    const char* const vertexShaderSource = vertexShaderSourceString.c_str();
+    const char* const fragmentShaderSource = fragmentShaderSourceString.c_str();
 
     unsigned int vertexShader, fragmentShader, shaderProgram;
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
