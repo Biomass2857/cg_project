@@ -13,6 +13,7 @@
 #elif _WIN32
 #include <GL/gl.h>
 #endif
+#include <cmath>
 
 std::string readFileToString(const std::string& filename) {
     std::ifstream file;
