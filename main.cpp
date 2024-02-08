@@ -186,7 +186,6 @@ int main() {
         phi += 0.007f;
         gamma += 0.0001f;
 
-
         glUniform1f(glGetUniformLocation(shaderProgram, "theta"), theta);
         glUniform1f(glGetUniformLocation(shaderProgram, "phi"), phi);
         glUniform1f(glGetUniformLocation(shaderProgram, "gamma"), gamma);
@@ -202,6 +201,7 @@ int main() {
     }
 
     glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &IBO);
     glDeleteBuffers(1, &VBO);
     glDeleteProgram(shaderProgram);
 
