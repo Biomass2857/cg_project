@@ -64,40 +64,40 @@ int main() {
     float len = 0.5f;
     float vertices[] = {
         // front face
-        -len, -len, len, 1.0f, 0.0f, 0.0f,
-        len, -len, len, 1.0f, 0.0f, 0.0f,
-        -len, len, len, 1.0f, 0.0f, 0.0f,
-        len, len, len, 1.0f, 0.0f, 0.0f,
+        -len, -len, len, 1.0f, 0.0f, 0.0f, -0.5f, -0.5f, 0.5f,
+        len, -len, len, 1.0f, 0.0f, 0.0f, 0.5f, -0.5f, 0.5f,
+        -len, len, len, 1.0f, 0.0f, 0.0f, -0.5f, 0.5f, 0.5f,
+        len, len, len, 1.0f, 0.0f, 0.0f, 0.5f, 0.5f, 0.5f,
 
         // right face
-        len, -len, len, 0.0f, 1.0f, 0.0f,
-        len, len, len, 0.0f, 1.0f, 0.0f,
-        len, -len, -len, 0.0f, 1.0f, 0.0f,
-        len, len, -len, 0.0f, 1.0f, 0.0f,
+        len, -len, len, 0.0f, 1.0f, 0.0f, 0.5f, -0.5f, 0.5f,
+        len, len, len, 0.0f, 1.0f, 0.0f, 0.5f, 0.5f, 0.5f,
+        len, -len, -len, 0.0f, 1.0f, 0.0f, 0.5f, -0.5f, -0.5f,
+        len, len, -len, 0.0f, 1.0f, 0.0f, 0.5f, 0.5f, -0.5f,
 
         // back face
-        -len, -len, -len, 0.5f, 0.0f, 0.5f,
-        len, -len, -len, 0.5f, 0.0f, 0.5f,
-        -len, len, -len, 0.5f, 0.0f, 0.5f,
-        len, len, -len, 0.5f, 0.0f, 0.5f,
+        -len, -len, -len, 0.5f, 0.0f, 0.5f, -0.5f, -0.5f, -0.5f,
+        len, -len, -len, 0.5f, 0.0f, 0.5f, 0.5f, -0.5f, -0.5f,
+        -len, len, -len, 0.5f, 0.0f, 0.5f, -0.5f, 0.5f, -0.5f,
+        len, len, -len, 0.5f, 0.0f, 0.5f, 0.5f, 0.5f, -0.5f,
 
         // left face
-        -len, -len, len, 0.0f, 0.0f, 1.0f,
-        -len, -len, -len, 0.0f, 0.0f, 1.0f,
-        -len, len, len, 0.0f, 0.0f, 1.0f,
-        -len, len, -len, 0.0f, 0.0f, 1.0f,
+        -len, -len, len, 0.0f, 0.0f, 1.0f, -0.5f, -0.5f, 0.5f,
+        -len, -len, -len, 0.0f, 0.0f, 1.0f, -0.5f, -0.5f, -0.5f,
+        -len, len, len, 0.0f, 0.0f, 1.0f, -0.5f, 0.5f, 0.5f,
+        -len, len, -len, 0.0f, 0.0f, 1.0f, -0.5f, 0.5f, -0.5f,
 
         // top face
-        -len, len, len, 1.0f, 1.0f, 0.0f,
-        len, len, len, 1.0f, 1.0f, 0.0f,
-        -len, len, -len, 1.0f, 1.0f, 0.0f,
-        len, len, -len, 1.0f, 1.0f, 0.0f,
+        -len, len, len, 1.0f, 1.0f, 0.0f, -0.5f, 0.5f, 0.5f,
+        len, len, len, 1.0f, 1.0f, 0.0f, 0.5f, 0.5f, 0.5f,
+        -len, len, -len, 1.0f, 1.0f, 0.0f, -0.5f, 0.5f, -0.5f,
+        len, len, -len, 1.0f, 1.0f, 0.0f, 0.5f, 0.5f, -0.5f,
 
         // bottom face
-        -len, -len, len, 0.0f, 1.0f, 1.0f,
-        len, -len, len, 0.0f, 1.0f, 1.0f,
-        -len, -len, -len, 0.0f, 1.0f, 1.0f,
-        len, -len, -len, 0.0f, 1.0f, 1.0f
+        -len, -len, len, 0.0f, 1.0f, 1.0f, -0.5f, -0.5f, 0.5f,
+        len, -len, len, 0.0f, 1.0f, 1.0f, 0.5f, -0.5f, 0.5f,
+        -len, -len, -len, 0.0f, 1.0f, 1.0f, -0.5f, -0.5f, -0.5f,
+        len, -len, -len, 0.0f, 1.0f, 1.0f , 0.5f, -0.5f, -0.5f
     };
 
     unsigned int VAO, VBO;
@@ -108,13 +108,17 @@ int main() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     // read positions from buffer
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
     // read colors from buffer
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(3 * sizeof(float)));
     // enable vertex attribute number 1 (we use as color)
     glEnableVertexAttribArray(1);
+
+    // normals
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
