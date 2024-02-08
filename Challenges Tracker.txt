@@ -1,0 +1,2 @@
+GL_DEPTH_TEST
+GL API verstehen und richtig anwenden (glAttribPointer)

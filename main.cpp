@@ -185,35 +185,15 @@ int main() {
         theta += 0.01f;
         phi += 0.007f;
         gamma += 0.0001f;
-        float rotZMatrix[16] = {
-            cos(theta), 0.0f, -sin(theta), 0.0f,
-            0.0f, 1.0f, 0.0f, 0.0f,
-            sin(theta), 0.0f, cos(theta), 0.0f,
-            0.0f, 0.0f, 0.0f, 1.0f
-        };
-        
-        float rotXMatrix[16] = {
-            cos(theta), -sin(theta), 0.0f, 0.0f,
-            sin(theta), cos(theta), 0.0f, 0.0f,
-            0.0f, 0.0f, 1, 0.0f,
-            0.0f, 0.0f, 0.0f, 1.0f
-        };
 
-        float rotYMatrix[16] = {
-            1.0f, 0.0f, 0.0f, 0.0f,
-            0.0f, cos(gamma), -sin(gamma), 0.0f,
-            0.0f, sin(gamma), cos(gamma), 0.0f,
-            0.0f, 0.0f, 0.0f, 1.0f
-        };
 
-        glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "rotZMatrix"), 1, GL_FALSE, rotZMatrix);
-        glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "rotXMatrix"), 1, GL_FALSE, rotXMatrix);
-        glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "rotYMatrix"), 1, GL_FALSE, rotYMatrix);
+        glUniform1f(glGetUniformLocation(shaderProgram, "theta"), theta);
+        glUniform1f(glGetUniformLocation(shaderProgram, "phi"), phi);
+        glUniform1f(glGetUniformLocation(shaderProgram, "gamma"), gamma);
         glBindVertexArray(VAO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 
         glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(unsigned short), GL_UNSIGNED_SHORT, nullptr);
-        // glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices)/sizeof(float));
         glBindVertexArray(0);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
