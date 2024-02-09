@@ -4,16 +4,9 @@ layout (location = 1) in vec3 aColor;
 layout (location = 2) in vec3 vNormal;
 
 uniform float u_time;
-uniform float theta;
-uniform float phi;
-uniform float gamma;
 
 out vec3 normal;
 out vec3 color;
-
-
-
-
 
 mat4 generateXRotationMatrix(float angle) {
     float cosAngle = cos(angle);
