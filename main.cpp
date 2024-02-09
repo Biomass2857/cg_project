@@ -75,6 +75,9 @@ int main() {
         return -1;
     }
 
+    const GLubyte* version = glGetString(GL_VERSION);
+    std::cout << "OpenGL version supported by this platform: " << version << std::endl;
+
     float len = 0.5f;
     float vertices[] = {
         // front face
@@ -198,12 +201,12 @@ int main() {
     glUseProgram(shaderProgram);
 
     glEnable(GL_DEPTH_TEST);
+
     clock_t t;
     t = clock();
     t = t = clock() - t;
-    double time_taken = ((double)t) / CLOCKS_PER_SEC;
-    GLfloat u_time = time_taken;
-    
+    double time_taken = ((double) t) / CLOCKS_PER_SEC;
+    GLfloat u_time = time_taken;    
 
     while(!glfwWindowShouldClose(window)) {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
