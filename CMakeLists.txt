@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 11)
 find_package(OpenGL 4.6 REQUIRED)
 find_package(glfw3 3.3 REQUIRED)
 find_package(GLEW 2.2 REQUIRED)
-find_package(glm 1.0 REQUIRED)
+find_package(glm REQUIRED)
 
 file(GLOB_RECURSE SOURCES "src/*.hpp" "src/*.cpp")
 
