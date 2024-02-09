@@ -1,6 +1,5 @@
 #include "Shader.hpp"
 
-
 Shader::Shader(const std::string path, ShaderType type) {
     std::string fileExtension = getTypeFileExtension(type);
     std::string source = Util::readFileToString(path + fileExtension);
