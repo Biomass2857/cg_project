@@ -2,7 +2,7 @@
 #define SHADERPROGRAM_HPP
 #include <vector>
 #include <string>
-#include "Shader.hpp"
+#include "../Shader/Shader.hpp"
 
 class ShaderProgram {
     public:

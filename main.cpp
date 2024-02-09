@@ -13,8 +13,8 @@
 #include <GL/gl.h>
 #endif
 
-#include "src/Shader.hpp"
-#include "src/ShaderProgram.hpp"
+#include "src/Shader/Shader.hpp"
+#include "src/ShaderProgram/ShaderProgram.hpp"
 
 void errorCallback(int iError, const char* pcDescription) {
     std::cerr << "GLFW Error: " + std::to_string(iError) + " " + std::string(pcDescription) << std::endl;

@@ -3,7 +3,7 @@
 #include <string>
 #include <sstream>
 #include <fstream>
-#include "Util.hpp"
+#include "../Util/Util.hpp"
 
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
