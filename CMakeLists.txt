@@ -8,7 +8,7 @@ find_package(glm 1.0 REQUIRED)
 
 file(GLOB_RECURSE SOURCES "src/*.hpp" "src/*.cpp")
 
-add_executable(OpenGLProject "main.cpp" ${SOURCES})
+add_executable(OpenGLProject "src/main.cpp" ${SOURCES})
 
 target_include_directories(OpenGLProject PRIVATE ${OPENGL_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS})
 target_link_libraries(OpenGLProject PRIVATE OpenGL::GL glfw GLEW::GLEW glm::glm)
