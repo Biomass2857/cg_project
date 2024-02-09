@@ -2,9 +2,8 @@
 #include <GLFW/glfw3.h>
 #include <string>
 #include <iostream>
-#include <fstream>
-#include <sstream>
 #include <vector>
+#include <cmath>
 
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
@@ -13,39 +12,12 @@
 #elif _WIN32
 #include <GL/gl.h>
 #endif
-#include <cmath>
 
-std::string readFileToString(const std::string& filename) {
-    std::ifstream file;
-    std::stringstream ss;
-
-    file.open(filename);
-    if(file.is_open()) {
-        ss << file.rdbuf();
-        file.close();
-    } else {
-        std::cerr <<"Unable to open file: "<< filename << std::endl;
-    }
-    
-    return ss.str();
-}
+#include "Shader.hpp"
+#include "ShaderProgram.hpp"
 
 void errorCallback(int iError, const char* pcDescription) {
     std::cerr << "GLFW Error: " + std::to_string(iError) + " " + std::string(pcDescription) << std::endl;
-}
-
-void checkShaderCompiled(GLint shader) {
-    GLint compiled;
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
-    if(!compiled) {
-        GLint length;
-        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
-        std::vector<GLchar> infoLog(length);
-        glGetShaderInfoLog(shader, length, &length, &infoLog[0]);
-        std::cerr <<"Shader compilation failed: "<< &infoLog[0] << std::endl;
-        glDeleteShader(shader);
-        exit(-1);
-    }
 }
 
 int main() {
@@ -171,56 +143,26 @@ int main() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    std::string vertexShaderSourceString = readFileToString("../shader/shader.vert");
-    std::string fragmentShaderSourceString = readFileToString("../shader/shader.frag");
-
-    const char* const vertexShaderSource = vertexShaderSourceString.c_str();
-    const char* const fragmentShaderSource = fragmentShaderSourceString.c_str();
-
-    unsigned int vertexShader, fragmentShader, shaderProgram;
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
-    glCompileShader(vertexShader);
-    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
-    glCompileShader(fragmentShader);
-    shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    checkShaderCompiled(vertexShader);
-    checkShaderCompiled(fragmentShader);
-
-    float theta = 0.5f;
-    float phi = 0.35f;
-    float gamma = 0.0f;
-
-    glUseProgram(shaderProgram);
+    Shader vertexShader = Shader("../shader/default/default", VERTEX);
+    Shader fragmentShader = Shader("../shader/default/default", FRAGMENT);
+    std::vector<Shader> shaders;
+    shaders.push_back(vertexShader);
+    shaders.push_back(fragmentShader);
+    ShaderProgram shaderProgram = ShaderProgram(shaders);
+    shaderProgram.use();
 
     glEnable(GL_DEPTH_TEST);
 
-    clock_t t;
-    t = clock();
-    t = t = clock() - t;
-    double time_taken = ((double) t) / CLOCKS_PER_SEC;
-    GLfloat u_time = time_taken;    
+    float start_time = ((float) clock()) / CLOCKS_PER_SEC;
+    float u_time = 0.0f;
 
     while(!glfwWindowShouldClose(window)) {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        theta += 0.01f;
-        phi += 0.007f;
-        gamma += 0.0001f;
-        u_time += 0.001;
+        u_time = ((float) clock()) / CLOCKS_PER_SEC - start_time;
 
-        glUniform1f(glGetUniformLocation(shaderProgram, "u_time"), u_time);
-        glUniform1f(glGetUniformLocation(shaderProgram, "theta"), theta);
-        glUniform1f(glGetUniformLocation(shaderProgram, "phi"), phi);
-        glUniform1f(glGetUniformLocation(shaderProgram, "gamma"), gamma);
+        shaderProgram.setFloat("u_time", u_time);
 
         glBindVertexArray(VAO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
@@ -236,7 +178,11 @@ int main() {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &IBO);
     glDeleteBuffers(1, &VBO);
-    glDeleteProgram(shaderProgram);
+
+    shaderProgram.free();
+    for(Shader shader : shaders) {
+        shader.free();
+    }
 
     glfwTerminate();
 
