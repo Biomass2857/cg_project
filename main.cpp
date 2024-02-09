@@ -212,10 +212,13 @@ int main() {
         theta += 0.01f;
         phi += 0.007f;
         gamma += 0.0001f;
+        u_time += 0.001;
 
+        glUniform1f(glGetUniformLocation(shaderProgram, "u_time"), u_time);
         glUniform1f(glGetUniformLocation(shaderProgram, "theta"), theta);
         glUniform1f(glGetUniformLocation(shaderProgram, "phi"), phi);
         glUniform1f(glGetUniformLocation(shaderProgram, "gamma"), gamma);
+
         glBindVertexArray(VAO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 
