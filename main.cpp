@@ -34,6 +34,20 @@ void errorCallback(int iError, const char* pcDescription) {
     std::cerr << "GLFW Error: " + std::to_string(iError) + " " + std::string(pcDescription) << std::endl;
 }
 
+void checkShaderCompiled(GLint shader) {
+    GLint compiled;
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
+    if(!compiled) {
+        GLint length;
+        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
+        std::vector<GLchar> infoLog(length);
+        glGetShaderInfoLog(shader, length, &length, &infoLog[0]);
+        std::cerr <<"Shader compilation failed: "<< &infoLog[0] << std::endl;
+        glDeleteShader(shader);
+        exit(-1);
+    }
+}
+
 int main() {
     if(!glfwInit()) {
         return -1;
@@ -173,6 +187,9 @@ int main() {
     glLinkProgram(shaderProgram);
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
+
+    checkShaderCompiled(vertexShader);
+    checkShaderCompiled(fragmentShader);
 
     float theta = 0.5f;
     float phi = 0.35f;

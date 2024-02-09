@@ -1,7 +1,7 @@
 #version 330 core
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aColor;
-layout (location = 2) in vec2 vNormal;
+layout (location = 2) in vec3 vNormal;
 
 uniform float theta;
 uniform float phi;
@@ -48,5 +48,7 @@ void main() {
     mat4 rotXMatrix = generateXRotationMatrix(theta);
     mat4 rotYMatrix = generateYRotationMatrix(phi);
     mat4 rotZMatrix = generateZRotationMatrix(gamma);
-    gl_Position = rotYMatrix * rotXMatrix * rotZMatrix * vec4(aPos, 1.0);
+    mat4 totalTransformation = rotYMatrix * rotXMatrix * rotZMatrix;
+    normal = mat3(totalTransformation) * vNormal;
+    gl_Position = totalTransformation * vec4(aPos, 1.0);
 }
