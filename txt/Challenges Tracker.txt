@@ -2,3 +2,5 @@ GL_DEPTH_TEST
 GL API verstehen und richtig anwenden (glAttribPointer)
 normal vectors richtig definieren für fr shader
 obj/3d modelle files
+CMake
+C++

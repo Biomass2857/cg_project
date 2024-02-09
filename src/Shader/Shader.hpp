@@ -7,7 +7,6 @@
 #include <fstream>
 #include "../Util/Util.hpp"
 
-
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
 #elif __linux__
