@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 project(OpenGLProject)
+set(CMAKE_CXX_STANDARD 11)
 
 find_package(OpenGL 4.6 REQUIRED)
 find_package(glfw3 3.3 REQUIRED)
