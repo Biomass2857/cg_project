@@ -34,6 +34,20 @@ void errorCallback(int iError, const char* pcDescription) {
     std::cerr << "GLFW Error: " + std::to_string(iError) + " " + std::string(pcDescription) << std::endl;
 }
 
+void checkShaderCompiled(GLint shader) {
+    GLint compiled;
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
+    if(!compiled) {
+        GLint length;
+        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
+        std::vector<GLchar> infoLog(length);
+        glGetShaderInfoLog(shader, length, &length, &infoLog[0]);
+        std::cerr <<"Shader compilation failed: "<< &infoLog[0] << std::endl;
+        glDeleteShader(shader);
+        exit(-1);
+    }
+}
+
 int main() {
     if(!glfwInit()) {
         return -1;
@@ -64,40 +78,40 @@ int main() {
     float len = 0.5f;
     float vertices[] = {
         // front face
-        -len, -len, len, 1.0f, 0.0f, 0.0f,
-        len, -len, len, 1.0f, 0.0f, 0.0f,
-        -len, len, len, 1.0f, 0.0f, 0.0f,
-        len, len, len, 1.0f, 0.0f, 0.0f,
+        -len, -len, len, 1.0f, 0.0f, 0.0f, -0.5f, -0.5f, 0.5f,
+        len, -len, len, 1.0f, 0.0f, 0.0f, 0.5f, -0.5f, 0.5f,
+        -len, len, len, 1.0f, 0.0f, 0.0f, -0.5f, 0.5f, 0.5f,
+        len, len, len, 1.0f, 0.0f, 0.0f, 0.5f, 0.5f, 0.5f,
 
         // right face
-        len, -len, len, 0.0f, 1.0f, 0.0f,
-        len, len, len, 0.0f, 1.0f, 0.0f,
-        len, -len, -len, 0.0f, 1.0f, 0.0f,
-        len, len, -len, 0.0f, 1.0f, 0.0f,
+        len, -len, len, 0.0f, 1.0f, 0.0f, 0.5f, -0.5f, 0.5f,
+        len, len, len, 0.0f, 1.0f, 0.0f, 0.5f, 0.5f, 0.5f,
+        len, -len, -len, 0.0f, 1.0f, 0.0f, 0.5f, -0.5f, -0.5f,
+        len, len, -len, 0.0f, 1.0f, 0.0f, 0.5f, 0.5f, -0.5f,
 
         // back face
-        -len, -len, -len, 0.5f, 0.0f, 0.5f,
-        len, -len, -len, 0.5f, 0.0f, 0.5f,
-        -len, len, -len, 0.5f, 0.0f, 0.5f,
-        len, len, -len, 0.5f, 0.0f, 0.5f,
+        -len, -len, -len, 0.5f, 0.0f, 0.5f, -0.5f, -0.5f, -0.5f,
+        len, -len, -len, 0.5f, 0.0f, 0.5f, 0.5f, -0.5f, -0.5f,
+        -len, len, -len, 0.5f, 0.0f, 0.5f, -0.5f, 0.5f, -0.5f,
+        len, len, -len, 0.5f, 0.0f, 0.5f, 0.5f, 0.5f, -0.5f,
 
         // left face
-        -len, -len, len, 0.0f, 0.0f, 1.0f,
-        -len, -len, -len, 0.0f, 0.0f, 1.0f,
-        -len, len, len, 0.0f, 0.0f, 1.0f,
-        -len, len, -len, 0.0f, 0.0f, 1.0f,
+        -len, -len, len, 0.0f, 0.0f, 1.0f, -0.5f, -0.5f, 0.5f,
+        -len, -len, -len, 0.0f, 0.0f, 1.0f, -0.5f, -0.5f, -0.5f,
+        -len, len, len, 0.0f, 0.0f, 1.0f, -0.5f, 0.5f, 0.5f,
+        -len, len, -len, 0.0f, 0.0f, 1.0f, -0.5f, 0.5f, -0.5f,
 
         // top face
-        -len, len, len, 1.0f, 1.0f, 0.0f,
-        len, len, len, 1.0f, 1.0f, 0.0f,
-        -len, len, -len, 1.0f, 1.0f, 0.0f,
-        len, len, -len, 1.0f, 1.0f, 0.0f,
+        -len, len, len, 1.0f, 1.0f, 0.0f, -0.5f, 0.5f, 0.5f,
+        len, len, len, 1.0f, 1.0f, 0.0f, 0.5f, 0.5f, 0.5f,
+        -len, len, -len, 1.0f, 1.0f, 0.0f, -0.5f, 0.5f, -0.5f,
+        len, len, -len, 1.0f, 1.0f, 0.0f, 0.5f, 0.5f, -0.5f,
 
         // bottom face
-        -len, -len, len, 0.0f, 1.0f, 1.0f,
-        len, -len, len, 0.0f, 1.0f, 1.0f,
-        -len, -len, -len, 0.0f, 1.0f, 1.0f,
-        len, -len, -len, 0.0f, 1.0f, 1.0f
+        -len, -len, len, 0.0f, 1.0f, 1.0f, -0.5f, -0.5f, 0.5f,
+        len, -len, len, 0.0f, 1.0f, 1.0f, 0.5f, -0.5f, 0.5f,
+        -len, -len, -len, 0.0f, 1.0f, 1.0f, -0.5f, -0.5f, -0.5f,
+        len, -len, -len, 0.0f, 1.0f, 1.0f , 0.5f, -0.5f, -0.5f
     };
 
     unsigned int VAO, VBO;
@@ -108,13 +122,17 @@ int main() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     // read positions from buffer
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
     // read colors from buffer
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(3 * sizeof(float)));
     // enable vertex attribute number 1 (we use as color)
     glEnableVertexAttribArray(1);
+
+    // normals
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
@@ -170,6 +188,13 @@ int main() {
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
+    checkShaderCompiled(vertexShader);
+    checkShaderCompiled(fragmentShader);
+
+    float theta = 0.5f;
+    float phi = 0.35f;
+    float gamma = 0.0f;
+
     glUseProgram(shaderProgram);
 
     glEnable(GL_DEPTH_TEST);
@@ -184,13 +209,17 @@ int main() {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        u_time += 0.001;
-        glUniform1f(glGetUniformLocation(shaderProgram, "u_time"), u_time);
+        theta += 0.01f;
+        phi += 0.007f;
+        gamma += 0.0001f;
+
+        glUniform1f(glGetUniformLocation(shaderProgram, "theta"), theta);
+        glUniform1f(glGetUniformLocation(shaderProgram, "phi"), phi);
+        glUniform1f(glGetUniformLocation(shaderProgram, "gamma"), gamma);
         glBindVertexArray(VAO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 
         glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(unsigned short), GL_UNSIGNED_SHORT, nullptr);
-        // glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices)/sizeof(float));
         glBindVertexArray(0);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
@@ -199,6 +228,7 @@ int main() {
     }
 
     glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &IBO);
     glDeleteBuffers(1, &VBO);
     glDeleteProgram(shaderProgram);
 
