@@ -17,6 +17,10 @@
 #include "Shader/Shader.hpp"
 #include "ShaderProgram/ShaderProgram.hpp"
 #include "Object/Object.hpp"
+#include "camera/Camera.hpp"
+
+const unsigned int width = 800;
+const unsigned int height = 800;
 
 void errorCallback(int iError, const char* pcDescription) {
     std::cerr << "GLFW Error: " + std::to_string(iError) + " " + std::string(pcDescription) << std::endl;
@@ -51,6 +55,11 @@ int main() {
 
     const GLubyte* version = glGetString(GL_VERSION);
     std::cout << "OpenGL version supported by this platform: " << version << std::endl;
+
+
+    Camera camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f));
+
+
 
     float len = 0.5f;
     std::vector<float> vertices = {
@@ -145,6 +154,10 @@ int main() {
 
         shaderProgram.setFloat("u_time", u_time);
 
+        // Updates and exports the camera matrix to the Vertex Shader
+        camera.Inputs(window);
+        camera.Matrix(45.f, 0.1f, 100.0f, "camMatrix");
+        
         // cube.render();
         tank.render();
 

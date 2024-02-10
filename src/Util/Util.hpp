@@ -5,6 +5,7 @@
 #include <sstream>
 #include <iostream>
 #include <fstream>
+#include <vector>
 
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
