@@ -63,7 +63,7 @@ struct ObjFace ObjLoader::parseFace(const std::vector<std::string>& face_vertice
 
         struct ObjVertex obj_vertex;
         try {
-            obj_vertex.vertexIndex = std::stoi(vertex_data[0]);
+            obj_vertex.vertexIndex = std::stoi(vertex_data[0]) - 1;
         } catch(std::exception e) {
             #ifdef OBJ_LOADER_VERBOSE
             std::cerr << "["<< path <<"] error missing vertex index" << std::endl;
@@ -71,7 +71,7 @@ struct ObjFace ObjLoader::parseFace(const std::vector<std::string>& face_vertice
         }
 
         try {
-            obj_vertex.uvIndex = std::stoi(vertex_data[1]);
+            obj_vertex.uvIndex = std::stoi(vertex_data[1]) - 1;
         } catch(std::exception e) {
             #ifdef OBJ_LOADER_VERBOSE
             std::cout << "["<< path <<"] warning uv coordinate missing" << std::endl;
@@ -79,7 +79,7 @@ struct ObjFace ObjLoader::parseFace(const std::vector<std::string>& face_vertice
         }
 
         try {
-            obj_vertex.normalIndex = std::stoi(vertex_data[2]);
+            obj_vertex.normalIndex = std::stoi(vertex_data[2]) - 1;
         } catch(std::exception e) {
             #ifdef OBJ_LOADER_VERBOSE
             std::cout << "["<< path <<"] warning normal vector missing" << std::endl;
