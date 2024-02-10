@@ -17,13 +17,14 @@ TextureAtlas::TextureAtlas(
             std::memcpy(data, textureAtlasBytes + dataStart, dataLen);
         }
 
-        textures.push_back(Texture(data, config.width, config.height, this->channels));
+        Texture texture = Texture(data, config.width, config.height, channels);
+        textures.insert(std::pair<std::string, Texture>(config.name, texture));
     }
 }
 
 void TextureAtlas::free() {
-    for(Texture& texture : textures) {
-        texture.free();
+    for(auto& pair : textures) {
+        pair.second.free();
     }
 
     stbi_image_free((void*) textureAtlasBytes);

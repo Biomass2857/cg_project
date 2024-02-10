@@ -3,6 +3,7 @@
 
 #include <string>
 #include <cstring>
+#include <unordered_map>
 
 #include "Texture.hpp"
 
@@ -31,13 +32,15 @@ class TextureAtlas {
             const std::vector<TextureConfiguration>& configuration
         );
 
+        Texture getTexture(const std::string& name) const;
+
         void free();
     private:
         const uint8_t* textureAtlasBytes;
 
         int channels;
         int width, height;
-        std::vector<Texture> textures;
+        std::unordered_map<std::string, Texture> textures;
 };
 
 #endif

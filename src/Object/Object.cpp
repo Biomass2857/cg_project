@@ -1,10 +1,26 @@
 #include "Object.hpp"
 
+unsigned short getVertexFeatureSize(VertexFeature feature) {
+    switch(feature) {
+        case VertexFeature::Position:
+            return 3;
+        case VertexFeature::Normal:
+            return 3;
+        case VertexFeature::Color:
+            return 3;
+        case VertexFeature::UV:
+            return 2;
+    }
+
+    return 0;
+}
+
 Object::Object(
     const std::vector<float> vertices,
-    const std::vector<unsigned int> indices
+    const std::vector<unsigned int> indices,
+    const std::vector<VertexFeature> features
 ) {
-    init(vertices, indices);
+    init(vertices, indices, features);
 }
 
 Object::Object(const std::string& obj_file_path) {
@@ -19,31 +35,32 @@ Object::Object(const std::string& obj_file_path) {
             vertices.push_back(loader.vertices[vertex.vertexIndex].y);
             vertices.push_back(loader.vertices[vertex.vertexIndex].z);
 
-            // use normals as color for now
             vertices.push_back(loader.normals[vertex.normalIndex].x);
             vertices.push_back(loader.normals[vertex.normalIndex].y);
             vertices.push_back(loader.normals[vertex.normalIndex].z);
 
+            // TODO: use correct color
             vertices.push_back(loader.normals[vertex.normalIndex].x);
             vertices.push_back(loader.normals[vertex.normalIndex].y);
             vertices.push_back(loader.normals[vertex.normalIndex].z);
 
-            // Add later
-            // vertices.push_back(loader.uvs[vertex.uvIndex].x);
-            // vertices.push_back(loader.uvs[vertex.uvIndex].y);
+            vertices.push_back(loader.uvs[vertex.uvIndex].x);
+            vertices.push_back(loader.uvs[vertex.uvIndex].y);
 
             indices.push_back(indices.size());
         }
     }
 
-    init(vertices, indices);
+    init(vertices, indices, { VertexFeature::Position, VertexFeature::Normal, VertexFeature::Color, VertexFeature::UV });
 }
 
 void Object::init(
     const std::vector<float> vertices,
-    const std::vector<unsigned int> indices
+    const std::vector<unsigned int> indices,
+    const std::vector<VertexFeature> features
 ) {
     this->transformation = glm::mat4(1.0f);
+
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
 
@@ -51,17 +68,18 @@ void Object::init(
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
 
-    // positions
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);
+    unsigned short stride = 0;
+    for(VertexFeature feature : features) {
+        stride += getVertexFeatureSize(feature);
+    }
 
-    // colors
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(3 * sizeof(float)));
-
-    // normals
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(6 * sizeof(float)));
+    unsigned short initialOffset = 0;
+    for(VertexFeature feature : features) {
+        unsigned short size = getVertexFeatureSize(feature);
+        glEnableVertexAttribArray((int) feature);
+        glVertexAttribPointer((int) feature, size, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(initialOffset * sizeof(float)));
+        initialOffset += size;
+    }
 
     indexCount = indices.size();
     glGenBuffers(1, &IBO);

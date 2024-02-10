@@ -18,11 +18,14 @@
 #include "../ObjLoader/ObjLoader.hpp"
 #include "../ShaderProgram/ShaderProgram.hpp"
 
+enum class VertexFeature { Position = 0, Normal = 1, Color = 2, UV = 3 };
+
 class Object {
     public:
         Object(
             const std::vector<float> vertices,
-            const std::vector<unsigned int> indices
+            const std::vector<unsigned int> indices,
+            const std::vector<VertexFeature> features = { VertexFeature::Position }
         );
 
         Object(const std::string& obj_file_path);
@@ -36,7 +39,8 @@ class Object {
     private:
         void init(
             const std::vector<float> vertices,
-            const std::vector<unsigned int> indices
+            const std::vector<unsigned int> indices,
+            const std::vector<VertexFeature> features
         );
 
         glm::mat4 transformation;
