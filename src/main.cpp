@@ -123,15 +123,9 @@ int main() {
         21, 22, 23
     };
 
-    std::cout <<"here1"<< std::endl;
     Object cube = Object(vertices, indices, { VertexFeature::Position, VertexFeature::Normal, VertexFeature::Color });
-
-    std::cout <<"here2"<< std::endl;
-
-    // Object tank = Object("../assets/Sketch_Tank/tank_1.obj");
-    // tank.scale(0.05f);
-
-    std::cout <<"here3"<< std::endl;
+    Object tank = Object("../assets/Sketch_Tank/tank_1.obj", { VertexFeature::Position, VertexFeature::Normal, VertexFeature::Color });
+    tank.scale(0.05f);
 
     std::vector<struct TextureConfiguration> environmentTextureConfigurations = {
         TextureConfiguration("background_dark", 5, 5, 1024, 512),
@@ -155,7 +149,7 @@ int main() {
     shaderProgram.use();
 
     cube.setShader(shaderProgram);
-    // tank.setShader(shaderProgram);
+    tank.setShader(shaderProgram);
 
     glEnable(GL_DEPTH_TEST);
 
@@ -178,7 +172,7 @@ int main() {
         camera.Matrix(45.f, 0.1f, 100.0f, "camMatrix");
         
         cube.render();
-        // tank.render();
+        tank.render();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -190,7 +184,7 @@ int main() {
     }
 
     cube.free();
-    // tank.free();
+    tank.free();
 
     glfwTerminate();
 

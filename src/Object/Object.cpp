@@ -23,35 +23,51 @@ Object::Object(
     init(vertices, indices, features);
 }
 
-Object::Object(const std::string& obj_file_path) {
+Object::Object(
+    const std::string& obj_file_path,
+    const std::vector<VertexFeature> features
+) {
     ObjLoader loader(obj_file_path);
 
     std::vector<float> vertices;
     std::vector<unsigned int> indices;
 
+    bool positionEnabled = std::find(features.begin(), features.end(), VertexFeature::Position) != features.end();
+    bool normalEnabled = std::find(features.begin(), features.end(), VertexFeature::Normal) != features.end();
+    bool colorEnabled = std::find(features.begin(), features.end(), VertexFeature::Color) != features.end();
+    bool uvEnabled = std::find(features.begin(), features.end(), VertexFeature::UV) != features.end();
+
     for(struct ObjFace face : loader.faces) {
         for(struct ObjVertex vertex : face.vertices) {
-            vertices.push_back(loader.vertices[vertex.vertexIndex].x);
-            vertices.push_back(loader.vertices[vertex.vertexIndex].y);
-            vertices.push_back(loader.vertices[vertex.vertexIndex].z);
+            if(positionEnabled) {
+                vertices.push_back(loader.vertices[vertex.vertexIndex].x);
+                vertices.push_back(loader.vertices[vertex.vertexIndex].y);
+                vertices.push_back(loader.vertices[vertex.vertexIndex].z);
+            }
 
-            vertices.push_back(loader.normals[vertex.normalIndex].x);
-            vertices.push_back(loader.normals[vertex.normalIndex].y);
-            vertices.push_back(loader.normals[vertex.normalIndex].z);
+            if(normalEnabled) {
+                vertices.push_back(loader.normals[vertex.normalIndex].x);
+                vertices.push_back(loader.normals[vertex.normalIndex].y);
+                vertices.push_back(loader.normals[vertex.normalIndex].z);
+            }
 
             // TODO: use correct color
-            vertices.push_back(loader.normals[vertex.normalIndex].x);
-            vertices.push_back(loader.normals[vertex.normalIndex].y);
-            vertices.push_back(loader.normals[vertex.normalIndex].z);
+            if(colorEnabled) {
+                vertices.push_back(loader.normals[vertex.normalIndex].x);
+                vertices.push_back(loader.normals[vertex.normalIndex].y);
+                vertices.push_back(loader.normals[vertex.normalIndex].z);
+            }
 
-            vertices.push_back(loader.uvs[vertex.uvIndex].x);
-            vertices.push_back(loader.uvs[vertex.uvIndex].y);
+            if(uvEnabled) {
+                vertices.push_back(loader.uvs[vertex.uvIndex].x);
+                vertices.push_back(loader.uvs[vertex.uvIndex].y);
+            }
 
             indices.push_back(indices.size());
         }
     }
 
-    init(vertices, indices, { VertexFeature::Position, VertexFeature::Normal, VertexFeature::Color, VertexFeature::UV });
+    init(vertices, indices, features);
 }
 
 void Object::init(

@@ -10,6 +10,7 @@
 #endif
 
 #include <vector>
+#include <algorithm>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -28,7 +29,10 @@ class Object {
             const std::vector<VertexFeature> features = { VertexFeature::Position }
         );
 
-        Object(const std::string& obj_file_path);
+        Object(
+            const std::string& obj_file_path,
+            const std::vector<VertexFeature> features = { VertexFeature::Position, VertexFeature::Normal, VertexFeature::UV }
+        );
 
         void setShader(const ShaderProgram& shader);
 
