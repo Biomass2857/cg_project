@@ -25,8 +25,6 @@ ObjLoader::ObjLoader(const std::string path) {
             s >> vertex.z;
             vertex.w = 1.0f;
 
-            vertex *= 1.0/20.f;
-
             vertices.push_back(vertex);
         } else if(line.substr(0, 3) == "vt ") {
             std::istringstream s(line.substr(3));
@@ -63,7 +61,7 @@ struct ObjFace ObjLoader::parseFace(const std::vector<std::string>& face_vertice
 
         struct ObjVertex obj_vertex;
         try {
-            obj_vertex.vertexIndex = std::stoi(vertex_data[0]) - 1;
+            obj_vertex.vertexIndex = translateObjectFileIndexToVectorIndex(std::stoi(vertex_data[0]));
         } catch(std::exception e) {
             #ifdef OBJ_LOADER_VERBOSE
             std::cerr << "["<< path <<"] error missing vertex index" << std::endl;
@@ -71,7 +69,7 @@ struct ObjFace ObjLoader::parseFace(const std::vector<std::string>& face_vertice
         }
 
         try {
-            obj_vertex.uvIndex = std::stoi(vertex_data[1]) - 1;
+            obj_vertex.uvIndex = translateObjectFileIndexToVectorIndex(std::stoi(vertex_data[1]));
         } catch(std::exception e) {
             #ifdef OBJ_LOADER_VERBOSE
             std::cout << "["<< path <<"] warning uv coordinate missing" << std::endl;
@@ -79,7 +77,7 @@ struct ObjFace ObjLoader::parseFace(const std::vector<std::string>& face_vertice
         }
 
         try {
-            obj_vertex.normalIndex = std::stoi(vertex_data[2]) - 1;
+            obj_vertex.normalIndex = translateObjectFileIndexToVectorIndex(std::stoi(vertex_data[2]));
         } catch(std::exception e) {
             #ifdef OBJ_LOADER_VERBOSE
             std::cout << "["<< path <<"] warning normal vector missing" << std::endl;
@@ -90,6 +88,10 @@ struct ObjFace ObjLoader::parseFace(const std::vector<std::string>& face_vertice
     }
 
     return face;
+}
+
+unsigned int ObjLoader::translateObjectFileIndexToVectorIndex(unsigned int index) {
+    return index - 1;
 }
 
 std::vector<struct ObjMaterial> ObjLoader::readMaterials(const std::string path) {

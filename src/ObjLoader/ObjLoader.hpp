@@ -39,6 +39,7 @@ class ObjLoader {
 
         friend class Object;
     private:
+        unsigned int translateObjectFileIndexToVectorIndex(unsigned int index);
         std::vector<struct ObjMaterial> readMaterials(const std::string path);
         struct ObjFace parseFace(const std::vector<std::string>& face_vertices);
 
