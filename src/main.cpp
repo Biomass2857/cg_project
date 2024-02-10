@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <chrono>
 
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
@@ -133,14 +134,14 @@ int main() {
 
     glEnable(GL_DEPTH_TEST);
 
-    float start_time = ((float) clock()) / CLOCKS_PER_SEC;
     float u_time = 0.0f;
+    auto start = std::chrono::steady_clock::now();
 
     while(!glfwWindowShouldClose(window)) {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        u_time = ((float) clock()) / CLOCKS_PER_SEC - start_time;
+        u_time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() / 1000.0f;
 
         shaderProgram.setFloat("u_time", u_time);
 
