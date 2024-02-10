@@ -17,6 +17,8 @@
 namespace Util {
     std::string readFileToString(const std::string& filename);
 
+    std::vector<std::string> split(const std::string& s, char delimiter);
+
     template<typename T>
     void printVector(const std::vector<T>& vec);
 

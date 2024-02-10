@@ -15,6 +15,18 @@ std::string Util::readFileToString(const std::string& filename) {
     return ss.str();
 }
 
+std::vector<std::string> Util::split(const std::string& s, char delimiter) {
+    std::vector<std::string> tokens;
+    std::string token;
+    std::istringstream tokenStream(s);
+
+    while(std::getline(tokenStream, token, delimiter)) {
+        tokens.push_back(token);
+    }
+
+    return tokens;
+}
+
 template<typename T>
 void Util::printVector(const std::vector<T>& vec) {
     for(auto& v : vec) {
@@ -23,6 +35,8 @@ void Util::printVector(const std::vector<T>& vec) {
     std::cout << std::endl;
 }
 
+template void Util::printVector<int>(const std::vector<int>& vec);
+template void Util::printVector<std::string>(const std::vector<std::string>& vec);
 template void Util::printVector<float>(const std::vector<float>& vec);
 template void Util::printVector<unsigned short>(const std::vector<unsigned short>& vec);
 
