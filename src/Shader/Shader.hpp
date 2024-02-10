@@ -1,12 +1,7 @@
 #ifndef SHADER_HPP
 #define SHADER_HPP
-#include <GL/glew.h>
-#include <vector>
-#include <string>
-#include <sstream>
-#include <fstream>
-#include "../Util/Util.hpp"
 
+#include <GL/glew.h>
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
 #elif __linux__
@@ -14,6 +9,12 @@
 #elif _WIN32
 #include <GL/gl.h>
 #endif
+
+#include <vector>
+#include <string>
+#include <sstream>
+#include <fstream>
+#include "../Util/Util.hpp"
 
 enum ShaderType {
     VERTEX,
