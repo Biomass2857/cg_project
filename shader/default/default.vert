@@ -3,6 +3,8 @@ layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aColor;
 layout (location = 2) in vec3 vNormal;
 
+uniform mat4 modelview;
+
 uniform float u_time;
 
 out vec3 normal;
@@ -46,7 +48,7 @@ void main() {
     mat4 rotXMatrix = generateXRotationMatrix(u_time*10.0);
     mat4 rotYMatrix = generateYRotationMatrix(u_time*7.5);
     mat4 rotZMatrix = generateZRotationMatrix(u_time*12.5);
-    mat4 totalTransformation = rotYMatrix * rotXMatrix * rotZMatrix;
-    normal = mat3(totalTransformation) * vNormal;
-    gl_Position = totalTransformation * vec4(aPos, 1.0);
+    mat4 totalRotation = rotYMatrix * rotXMatrix * rotZMatrix;
+    normal = mat3(totalRotation) * vNormal;
+    gl_Position = totalRotation * modelview * vec4(aPos, 1.0);
 }

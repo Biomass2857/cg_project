@@ -119,6 +119,7 @@ int main() {
     Object cube = Object(vertices, indices);
 
     Object tank = Object("../assets/Sketch_Tank/tank_1.obj");
+    tank.scale(0.05f);
 
     Shader vertexShader = Shader("../shader/default/default", ShaderType::VERTEX);
     Shader fragmentShader = Shader("../shader/default/default", ShaderType::FRAGMENT);
@@ -127,6 +128,8 @@ int main() {
     shaders.push_back(fragmentShader);
     ShaderProgram shaderProgram = ShaderProgram(shaders);
     shaderProgram.use();
+
+    tank.setShader(shaderProgram);
 
     glEnable(GL_DEPTH_TEST);
 

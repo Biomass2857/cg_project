@@ -15,7 +15,7 @@ void ShaderProgram::add(Shader shader) {
     glAttachShader(ID, shader.ID);
 }
 
-void ShaderProgram::use() {
+void ShaderProgram::use() const {
     glUseProgram(ID);
 }
 
@@ -23,7 +23,11 @@ void ShaderProgram::setFloat(const std::string &name, float value) const {
     glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
 }
 
-void ShaderProgram::checkLinked() {
+void ShaderProgram::setMatrix4(const std::string &name, const glm::mat4 matrix) const {
+    glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
+}
+
+void ShaderProgram::checkLinked() const {
     GLint linkStatus;
     glGetProgramiv(ID, GL_LINK_STATUS, &linkStatus);
     if (linkStatus == GL_FALSE) {

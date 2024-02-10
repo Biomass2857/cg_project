@@ -10,8 +10,13 @@
 #endif
 
 #include <vector>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include "../Util/Util.hpp"
 #include "../ObjLoader/ObjLoader.hpp"
+#include "../ShaderProgram/ShaderProgram.hpp"
 
 class Object {
     public:
@@ -22,6 +27,10 @@ class Object {
 
         Object(const std::string& obj_file_path);
 
+        void setShader(const ShaderProgram& shader);
+
+        void scale(float factor);
+
         void render();
         void free();
     private:
@@ -29,6 +38,9 @@ class Object {
             const std::vector<float> vertices,
             const std::vector<unsigned int> indices
         );
+
+        glm::mat4 transformation;
+        const ShaderProgram* shader;
 
         unsigned int indexCount;
         unsigned int VAO, VBO, IBO;

@@ -43,6 +43,7 @@ void Object::init(
     const std::vector<float> vertices,
     const std::vector<unsigned int> indices
 ) {
+    this->transformation = glm::mat4(1.0f);
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
 
@@ -68,10 +69,21 @@ void Object::init(
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
 }
 
+void Object::setShader(const ShaderProgram& shader) {
+    this->shader = &shader;
+}
+
+void Object::scale(float factor) {
+    transformation = glm::scale(transformation, glm::vec3(factor));
+}
+
 void Object::render() {
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBindVertexArray(VAO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+
+    shader->setMatrix4("modelview", transformation);
+    shader->use();
 
     glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
 
