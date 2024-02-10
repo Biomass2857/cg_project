@@ -12,16 +12,16 @@
 
 #include <stdint.h>
 
-// class Texture {
-//     public:
-//         Texture(const uint8_t* data, unsigned int width, unsigned int height, unsigned short channels);
+class Texture {
+    public:
+        Texture(const uint8_t* data, unsigned int width, unsigned int height, unsigned short channels);
 
-//         void free();
-//     private:
-//         uint8_t *data;
+        void free();
+    private:
+        const uint8_t *data;
 
-//         unsigned short channels;
-//         unsigned int width, height;
-// };
+        unsigned short channels;
+        unsigned int width, height;
+};
 
 #endif

@@ -9,6 +9,10 @@ Camera::Camera(int width, int height, glm::vec3 position)
 	Position = position;
 }
 
+void Camera::setShader(const ShaderProgram& shader) {
+    this->shader = &shader;
+}
+
 void Camera::Matrix(float FOVdeg, float nearPlane, float farPlane, const char* uniform)
 {
 	// Initializes matrices since otherwise they will be the null matrix

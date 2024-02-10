@@ -3,6 +3,8 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+
+#define GLM_ENABLE_EXPERIMENTAL 1
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -33,6 +35,8 @@ public:
 	// Camera constructor to set up initial values
 	Camera(int width, int height, glm::vec3 position);
 
+    void setShader(const ShaderProgram& shader);
+    
 	// Updates and exports the camera matrix to the Vertex Shader
 	void Matrix(float FOVdeg, float nearPlane, float farPlane, const char* uniform);
 	// Handles camera inputs

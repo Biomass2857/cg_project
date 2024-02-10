@@ -17,10 +17,12 @@
 #include "Shader/Shader.hpp"
 #include "ShaderProgram/ShaderProgram.hpp"
 #include "Object/Object.hpp"
-#include "camera/Camera.hpp"
+#include "Camera/Camera.hpp"
+#include "Texture/TextureAtlas.hpp"
+#include "Texture/Texture.hpp"
 
-const unsigned int width = 800;
-const unsigned int height = 800;
+const unsigned int WINDOW_WIDTH = 600;
+const unsigned int WINDOW_HEIGHT = 600;
 
 void errorCallback(int iError, const char* pcDescription) {
     std::cerr << "GLFW Error: " + std::to_string(iError) + " " + std::string(pcDescription) << std::endl;
@@ -40,7 +42,7 @@ int main() {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     #endif
     
-    GLFWwindow* window = glfwCreateWindow(600, 600, "OpenGL Project", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(::WINDOW_WIDTH, ::WINDOW_HEIGHT, "OpenGL Project", nullptr, nullptr);
     if(!window) {
         glfwTerminate();
         return -1;
@@ -55,11 +57,6 @@ int main() {
 
     const GLubyte* version = glGetString(GL_VERSION);
     std::cout << "OpenGL version supported by this platform: " << version << std::endl;
-
-
-    Camera camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f));
-
-
 
     float len = 0.5f;
     std::vector<float> vertices = {
@@ -131,6 +128,13 @@ int main() {
     Object tank = Object("../assets/Sketch_Tank/tank_1.obj");
     tank.scale(0.05f);
 
+    std::vector<struct TextureConfiguration> environmentTextureConfigurations = {
+        TextureConfiguration("background_dark", 5, 5, 1024, 512),
+        TextureConfiguration("background_light", 5, 1029, 1024, 512)
+    };
+
+    TextureAtlas textureAtlas("../assets/wii/tanks_environment_texture_atlas.png", environmentTextureConfigurations);
+
     Shader vertexShader = Shader("../shader/default/default", ShaderType::VERTEX);
     Shader fragmentShader = Shader("../shader/default/default", ShaderType::FRAGMENT);
     std::vector<Shader> shaders;
@@ -145,6 +149,9 @@ int main() {
 
     float u_time = 0.0f;
     auto start = std::chrono::steady_clock::now();
+
+    Camera camera(::WINDOW_WIDTH, ::WINDOW_HEIGHT, glm::vec3(0.0f, 0.0f, 2.0f));
+    camera.setShader(shaderProgram);
 
     while(!glfwWindowShouldClose(window)) {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);

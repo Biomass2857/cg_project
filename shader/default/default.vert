@@ -14,5 +14,6 @@ uniform mat4 camMatrix;
 
 void main() {
     color = aColor;
+    normal = mat3(modelview) * vNormal;
     gl_Position = camMatrix * modelview * vec4(aPos, 1.0);
 }
