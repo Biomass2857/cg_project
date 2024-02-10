@@ -2,7 +2,46 @@
 
 Object::Object(
     const std::vector<float> vertices,
-    const std::vector<unsigned short> indices
+    const std::vector<unsigned int> indices
+) {
+    init(vertices, indices);
+}
+
+Object::Object(const std::string& obj_file_path) {
+    ObjLoader loader(obj_file_path);
+
+    std::vector<float> vertices;
+    std::vector<unsigned int> indices;
+
+    for(struct ObjFace face : loader.faces) {
+        for(struct ObjVertex vertex : face.vertices) {
+            vertices.push_back(loader.vertices[vertex.vertexIndex].x);
+            vertices.push_back(loader.vertices[vertex.vertexIndex].y);
+            vertices.push_back(loader.vertices[vertex.vertexIndex].z);
+
+            // use normals as color for now
+            vertices.push_back(loader.normals[vertex.normalIndex].x);
+            vertices.push_back(loader.normals[vertex.normalIndex].y);
+            vertices.push_back(loader.normals[vertex.normalIndex].z);
+
+            vertices.push_back(loader.normals[vertex.normalIndex].x);
+            vertices.push_back(loader.normals[vertex.normalIndex].y);
+            vertices.push_back(loader.normals[vertex.normalIndex].z);
+
+            // Add later
+            // vertices.push_back(loader.uvs[vertex.uvIndex].x);
+            // vertices.push_back(loader.uvs[vertex.uvIndex].y);
+
+            indices.push_back(indices.size());
+        }
+    }
+
+    init(vertices, indices);
+}
+
+void Object::init(
+    const std::vector<float> vertices,
+    const std::vector<unsigned int> indices
 ) {
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
@@ -26,7 +65,7 @@ Object::Object(
     indexCount = indices.size();
     glGenBuffers(1, &IBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(unsigned short), indices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
 }
 
 void Object::render() {
@@ -34,7 +73,7 @@ void Object::render() {
     glBindVertexArray(VAO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 
-    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_SHORT, nullptr);
+    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
 
     glBindVertexArray(0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);

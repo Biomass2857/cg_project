@@ -90,7 +90,7 @@ int main() {
         len, -len, -len, 0.0f, 1.0f, 1.0f , 0.5f, -0.5f, -0.5f
     };
 
-    std::vector<unsigned short> indices = {
+    std::vector<unsigned int> indices = {
         // front face
         0, 1, 2,
         1, 2, 3,
@@ -118,6 +118,8 @@ int main() {
 
     Object cube = Object(vertices, indices);
 
+    Object tank = Object("../assets/Sketch_Tank/tank_1.obj");
+
     Shader vertexShader = Shader("../shader/default/default", ShaderType::VERTEX);
     Shader fragmentShader = Shader("../shader/default/default", ShaderType::FRAGMENT);
     std::vector<Shader> shaders;
@@ -139,7 +141,8 @@ int main() {
 
         shaderProgram.setFloat("u_time", u_time);
 
-        cube.render();
+        // cube.render();
+        tank.render();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -151,6 +154,7 @@ int main() {
     }
 
     cube.free();
+    tank.free();
 
     glfwTerminate();
 

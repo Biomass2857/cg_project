@@ -11,17 +11,25 @@
 
 #include <vector>
 #include "../Util/Util.hpp"
+#include "../ObjLoader/ObjLoader.hpp"
 
 class Object {
     public:
         Object(
             const std::vector<float> vertices,
-            const std::vector<unsigned short> indices
+            const std::vector<unsigned int> indices
         );
+
+        Object(const std::string& obj_file_path);
 
         void render();
         void free();
     private:
+        void init(
+            const std::vector<float> vertices,
+            const std::vector<unsigned int> indices
+        );
+
         unsigned int indexCount;
         unsigned int VAO, VBO, IBO;
 };
