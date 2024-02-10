@@ -25,6 +25,8 @@ ObjLoader::ObjLoader(const std::string path) {
             s >> vertex.z;
             vertex.w = 1.0f;
 
+            vertex *= 1.0/20.f;
+
             vertices.push_back(vertex);
         } else if(line.substr(0, 3) == "vt ") {
             std::istringstream s(line.substr(3));
