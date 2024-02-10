@@ -15,8 +15,8 @@
 class Object {
     public:
         Object(
-            const std::vector<float>& vertices,
-            const std::vector<unsigned short>& indices
+            const std::vector<float> vertices,
+            const std::vector<unsigned short> indices
         );
 
         void render();

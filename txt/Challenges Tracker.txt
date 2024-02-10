@@ -4,3 +4,5 @@ normal vectors richtig definieren für fr shader
 obj/3d modelle files
 CMake
 C++
+
+BufferData braucht die size in bytes und nicht die anzahl an elementen :))

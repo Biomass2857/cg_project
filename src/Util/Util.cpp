@@ -15,6 +15,17 @@ std::string Util::readFileToString(const std::string& filename) {
     return ss.str();
 }
 
+template<typename T>
+void Util::printVector(const std::vector<T>& vec) {
+    for(auto& v : vec) {
+        std::cout << v <<" ";
+    }
+    std::cout << std::endl;
+}
+
+template void Util::printVector<float>(const std::vector<float>& vec);
+template void Util::printVector<unsigned short>(const std::vector<unsigned short>& vec);
+
 void Util::printGLError() {
     std::cerr <<"OpenGL error: 0x"<< std::hex << glGetError() << std::endl;
 }

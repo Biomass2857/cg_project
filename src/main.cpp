@@ -118,8 +118,8 @@ int main() {
 
     Object cube = Object(vertices, indices);
 
-    Shader vertexShader = Shader("../shader/default/default", VERTEX);
-    Shader fragmentShader = Shader("../shader/default/default", FRAGMENT);
+    Shader vertexShader = Shader("../shader/default/default", ShaderType::VERTEX);
+    Shader fragmentShader = Shader("../shader/default/default", ShaderType::FRAGMENT);
     std::vector<Shader> shaders;
     shaders.push_back(vertexShader);
     shaders.push_back(fragmentShader);
