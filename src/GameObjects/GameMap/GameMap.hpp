@@ -19,9 +19,9 @@ class GameMap {
     private:
         void generateWall();
 
-        unsigned int mapWidth = 1024;
-        unsigned int mapHeight = 512;
-        unsigned int boxWidth = 64;
+        float mapWidth = 20.f;
+        float mapHeight = 10.f;
+        float boxWidth = 1.0f;
 
         ShaderProgram* colorShader;
         ShaderProgram* textureShader;

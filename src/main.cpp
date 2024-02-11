@@ -61,9 +61,9 @@ int main() {
     std::cout << "OpenGL version supported by this platform: " << version << std::endl;
 
     std::vector<struct TextureConfiguration> environmentTextureConfigurations = {
-        TextureConfiguration("floor_dark", 5, 276, 1024, 512)
-        // TextureConfiguration("floor_light", 5, 276 + 1024 + 5, 1024, 512),
-        // TextureConfiguration("box_texture_light", 902, 207, 64, 64)
+        TextureConfiguration("floor_dark", 5, 276, 1024, 512),
+        TextureConfiguration("floor_light", 5, 276 + 1024 + 5, 1024, 512),
+        TextureConfiguration("box_texture_light", 902, 207, 64, 64)
     };
 
     TextureAtlas textureAtlas("../assets/wii/tanks_environment_texture_atlas.png", environmentTextureConfigurations);
