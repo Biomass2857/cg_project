@@ -53,5 +53,18 @@ void GameMap::free() {
 }
 
 void GameMap::generateWall() {
+    Texture boxTexture = this->atlas->getTexture("box_texture_light");
 
+    unsigned int blockCountX = mapWidth / boxWidth;
+    unsigned int blockCountY = mapHeight / boxWidth;
+
+    for(unsigned int i = 0; i < blockCountX; i++) {
+        for(unsigned int j = 0; j < blockCountY; j++) {
+            if(i == 0 || i == blockCountX - 1 || j == 0 || j == blockCountY - 1) {
+                Box box(0.5f, boxTexture);
+                box.translate(glm::vec3(i * boxWidth, 0.0f, j * boxWidth));
+                boxes.push_back(box);
+            }
+        }
+    }
 }

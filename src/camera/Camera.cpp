@@ -15,35 +15,35 @@ glm::mat4 Camera::getMatrix() const {
     return projection * view;
 }
 
-void Camera::getKeyInput(GLFWwindow* window) {
+void Camera::getKeyInput(GLFWwindow* window, float timestep) {
 	if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-		Position += speed * Orientation;
+		Position += currentSpeed * timestep * Orientation;
 	}
 
 	if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-		Position += speed * -glm::normalize(glm::cross(Orientation, Up));
+		Position += currentSpeed * timestep * -glm::normalize(glm::cross(Orientation, Up));
 	}
 
 	if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-		Position += speed * -Orientation;
+		Position += currentSpeed * timestep * -Orientation;
 	}
 
 	if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-		Position += speed * glm::normalize(glm::cross(Orientation, Up));
+		Position += currentSpeed * timestep * glm::normalize(glm::cross(Orientation, Up));
 	}
 
 	if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-		Position += speed * Up;
+		Position += currentSpeed * timestep * Up;
 	}
 
 	if(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
-		Position += speed * -Up;
+		Position += currentSpeed * timestep * -Up;
 	}
 
 	if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-		speed = 0.4f;
+		currentSpeed = fastMoveSpeed;
 	} else if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE) {
-		speed = 0.1f;
+		currentSpeed = slowMoveSpeed;
 	}
 
 	// Handles mouse inputs
@@ -65,8 +65,8 @@ void Camera::getKeyInput(GLFWwindow* window) {
 
 		// Normalizes and shifts the coordinates of the cursor such that they begin in the middle of the screen
 		// and then "transforms" them into degrees 
-		float rotX = sensitivity * (float)(mouseY - (height / 2)) / height;
-		float rotY = sensitivity * (float)(mouseX - (width / 2)) / width;
+		float rotX = timestep * sensitivity * (float)(mouseY - (height / 2)) / height;
+		float rotY = timestep * sensitivity * (float)(mouseX - (width / 2)) / width;
 
 		// Calculates upcoming vertical change in the Orientation
 		glm::vec3 newOrientation = glm::rotate(Orientation, glm::radians(-rotX), glm::normalize(glm::cross(Orientation, Up)));

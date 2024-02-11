@@ -30,12 +30,14 @@ class Camera {
         int height;
 
         // Adjust the speed of the camera and it's sensitivity when looking around
-        float speed = 0.1f;
-        float sensitivity = 100.0f;
+        const float slowMoveSpeed = 10.f;
+        const float fastMoveSpeed = 40.f;
+        float currentSpeed = 10.f;
+        const float sensitivity = 10000.0f;
 
         float FOVdeg, nearPlane, farPlane;
 
-        void getKeyInput(GLFWwindow* window);
+        void getKeyInput(GLFWwindow* window, float timestep);
         
         glm::mat4 getMatrix() const;
 };

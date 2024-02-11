@@ -90,12 +90,14 @@ int main() {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        u_time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() / 1000.0f;
+        float newTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() / 1000.0f;
+        float deltaTime = newTime - u_time;
+        u_time = newTime;
 
         defaultShaderProgram.setFloat("u_time", u_time);
         textureShaderProgram.setFloat("u_time", u_time);
 
-        camera.getKeyInput(window);
+        camera.getKeyInput(window, deltaTime);
 
         gameMap.render(camera);
 
