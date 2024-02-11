@@ -18,6 +18,7 @@
 #include "../Util/Util.hpp"
 #include "../ObjLoader/ObjLoader.hpp"
 #include "../ShaderProgram/ShaderProgram.hpp"
+#include "../Texture/Texture.hpp"
 
 enum class VertexFeature { Position = 0, Normal = 1, Color = 2, UV = 3 };
 
@@ -34,6 +35,7 @@ class Object {
             const std::vector<VertexFeature> features = { VertexFeature::Position, VertexFeature::Normal, VertexFeature::UV }
         );
 
+        void setTexture(const Texture& texture);
         void setShader(const ShaderProgram& shader);
 
         void scale(float factor);
@@ -48,6 +50,8 @@ class Object {
         );
 
         glm::mat4 transformation;
+        bool textureEnabled;
+        const Texture* texture;
         const ShaderProgram* shader;
 
         unsigned int indexCount;

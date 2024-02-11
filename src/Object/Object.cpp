@@ -101,6 +101,12 @@ void Object::init(
     glGenBuffers(1, &IBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+
+    textureEnabled = std::find(features.begin(), features.end(), VertexFeature::UV) != features.end();
+}
+
+void Object::setTexture(const Texture& texture) {
+    this->texture = &texture;
 }
 
 void Object::setShader(const ShaderProgram& shader) {
@@ -116,8 +122,14 @@ void Object::render() {
     glBindVertexArray(VAO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 
-    shader->setMatrix4("modelview", transformation);
     shader->use();
+    
+    if(textureEnabled) {
+        texture->bind();
+        shader->setTexture("tex0", *texture);
+    }
+
+    shader->setMatrix4("modelview", transformation);
 
     glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
 

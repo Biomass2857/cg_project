@@ -128,28 +128,41 @@ int main() {
     tank.scale(0.05f);
 
     std::vector<struct TextureConfiguration> environmentTextureConfigurations = {
-        TextureConfiguration("background_dark", 5, 5, 1024, 512),
-        TextureConfiguration("background_light", 5, 1029, 1024, 512)
+        TextureConfiguration("background_dark", 5, 5, 1024, 512)
+        // TextureConfiguration("background_light", 5, 1029, 1024, 512)
     };
 
     TextureAtlas textureAtlas("../assets/wii/tanks_environment_texture_atlas.png", environmentTextureConfigurations);
+    Texture environmentTexture = textureAtlas.getTexture("background_dark");
 
-    // std::vector<float> floor_vertices = {
-    //     0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-    // };
+    std::vector<float> floor_vertices = {
+        0.0f, 0.f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 10.f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+        5.f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+        5.f, 10.f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f
+    };
 
-    // Object floor = Object();
+    std::vector<unsigned int> floor_indices = {
+        0, 1, 2,
+        1, 2, 3
+    };
 
-    Shader vertexShader = Shader("../shader/default/default", ShaderType::VERTEX);
-    Shader fragmentShader = Shader("../shader/default/default", ShaderType::FRAGMENT);
-    std::vector<Shader> shaders;
-    shaders.push_back(vertexShader);
-    shaders.push_back(fragmentShader);
-    ShaderProgram shaderProgram = ShaderProgram(shaders);
-    shaderProgram.use();
+    Object floor = Object(floor_vertices, floor_indices, { VertexFeature::Position, VertexFeature::Normal, VertexFeature::UV });
 
-    cube.setShader(shaderProgram);
-    tank.setShader(shaderProgram);
+    floor.setTexture(environmentTexture);
+
+    Shader defaultVertexShader = Shader("../shader/default/default", ShaderType::VERTEX);
+    Shader defaultFragmentShader = Shader("../shader/default/default", ShaderType::FRAGMENT);
+    ShaderProgram defaultShaderProgram = ShaderProgram({ defaultVertexShader, defaultFragmentShader });
+    defaultShaderProgram.use();
+
+    Shader textureVertexShader = Shader("../shader/texture/texture", ShaderType::VERTEX);
+    Shader textureFragmentShader = Shader("../shader/texture/texture", ShaderType::FRAGMENT);
+    ShaderProgram textureShaderProgram = ShaderProgram({ textureVertexShader, textureFragmentShader });
+
+    cube.setShader(defaultShaderProgram);
+    tank.setShader(defaultShaderProgram);
+    floor.setShader(textureShaderProgram);
 
     glEnable(GL_DEPTH_TEST);
 
@@ -157,7 +170,8 @@ int main() {
     auto start = std::chrono::steady_clock::now();
 
     Camera camera(::WINDOW_WIDTH, ::WINDOW_HEIGHT, glm::vec3(0.0f, 0.0f, 2.0f));
-    camera.setShader(shaderProgram);
+    camera.addShader(defaultShaderProgram);
+    camera.addShader(textureShaderProgram);
 
     while(!glfwWindowShouldClose(window)) {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -165,26 +179,29 @@ int main() {
 
         u_time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() / 1000.0f;
 
-        shaderProgram.setFloat("u_time", u_time);
+        defaultShaderProgram.setFloat("u_time", u_time);
+        textureShaderProgram.setFloat("u_time", u_time);
 
-        // Updates and exports the camera matrix to the Vertex Shader
-        camera.Inputs(window);
-        camera.Matrix(45.f, 0.1f, 100.0f, "camMatrix");
+        camera.getKeyInput(window);
+        camera.updateCameraMatrix(45.f, 0.1f, 100.0f, "camMatrix");
         
-        cube.render();
-        tank.render();
+        // cube.render();
+        // tank.render();
+        floor.render();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
-    shaderProgram.free();
-    for(Shader shader : shaders) {
-        shader.free();
-    }
+    defaultShaderProgram.free();
+    defaultVertexShader.free();
+    defaultFragmentShader.free();
 
     cube.free();
     tank.free();
+    floor.free();
+
+    textureAtlas.free();
 
     glfwTerminate();
 

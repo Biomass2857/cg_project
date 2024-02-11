@@ -13,13 +13,18 @@ TextureAtlas::TextureAtlas(
             int atlasStartY = config.startY + y;
             int dataStart = (atlasStartY * width + config.startX) * channels;
             int dataLen = config.width * channels;
+            int dataOffset = y * config.width * channels;
 
-            std::memcpy(data, textureAtlasBytes + dataStart, dataLen);
+            std::memcpy(data + dataOffset, textureAtlasBytes + dataStart, dataLen);
         }
 
         Texture texture = Texture(data, config.width, config.height, channels);
         textures.insert(std::pair<std::string, Texture>(config.name, texture));
     }
+}
+
+Texture TextureAtlas::getTexture(const std::string& name) const {
+    return textures.at(name);
 }
 
 void TextureAtlas::free() {
