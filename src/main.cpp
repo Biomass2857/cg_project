@@ -20,6 +20,7 @@
 #include "Camera/Camera.hpp"
 #include "Texture/TextureAtlas.hpp"
 #include "Texture/Texture.hpp"
+#include "GameObjects/Box/Box.hpp"
 
 const unsigned int WINDOW_WIDTH = 600;
 const unsigned int WINDOW_HEIGHT = 600;
@@ -125,15 +126,21 @@ int main() {
 
     Object cube = Object(vertices, indices, { VertexFeature::Position, VertexFeature::Normal, VertexFeature::Color });
     Object tank = Object("../assets/Sketch_Tank/tank_1.obj", { VertexFeature::Position, VertexFeature::Normal, VertexFeature::Color });
+    Object shell = Object("../assets/Shell/shell.obj", { VertexFeature::Position, VertexFeature::Normal, VertexFeature::Color });
     tank.scale(0.05f);
+    shell.scale(0.05f);
 
     std::vector<struct TextureConfiguration> environmentTextureConfigurations = {
-        TextureConfiguration("background_dark", 5, 276, 1024, 512)
-        // TextureConfiguration("background_light", 5, 1029, 1024, 512)
+        TextureConfiguration("background_dark", 5, 276, 1024, 512),
+        TextureConfiguration("background_light", 5, 276 + 1024 + 5, 1024, 512),
+        TextureConfiguration("box_texture_light", 902, 207, 64, 64)
     };
 
     TextureAtlas textureAtlas("../assets/wii/tanks_environment_texture_atlas.png", environmentTextureConfigurations);
     Texture environmentTexture = textureAtlas.getTexture("background_dark");
+    Texture boxTextureLight = textureAtlas.getTexture("box_texture_light");
+
+    Box box = Box(0.5f, boxTextureLight);
 
     std::vector<float> floor_vertices = {
         0.0f, 0.f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
@@ -162,7 +169,9 @@ int main() {
 
     cube.setShader(defaultShaderProgram);
     tank.setShader(defaultShaderProgram);
+    shell.setShader(defaultShaderProgram);
     floor.setShader(textureShaderProgram);
+    box.setShader(textureShaderProgram);
 
     glEnable(GL_DEPTH_TEST);
 
@@ -191,6 +200,12 @@ int main() {
         floor.render();
         camera.updateCameraMatrix(45.f, 0.1f, 100.0f, "camMatrix");
 
+        shell.render();
+        camera.updateCameraMatrix(45.f, 0.1f, 100.0f, "camMatrix");
+
+        camera.updateCameraMatrix(45.f, 0.1f, 100.0f, "camMatrix");
+        box.render();
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -202,6 +217,8 @@ int main() {
     cube.free();
     tank.free();
     floor.free();
+    box.free();
+    shell.free();
 
     textureAtlas.free();
 
