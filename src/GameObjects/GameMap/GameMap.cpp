@@ -21,6 +21,8 @@ GameMap::GameMap(TextureAtlas &atlas, ShaderProgram& colorShader, ShaderProgram&
     floor.scale(10.0f);
 
     Tank tank;
+    tank.translate(glm::vec3(300.0f, 150.0f, 0.0f));
+
     Object shell = Object("../assets/Shell/shell.obj", { VertexFeature::Position, VertexFeature::Normal, VertexFeature::Color });
     shell.scale(0.05f);
 
