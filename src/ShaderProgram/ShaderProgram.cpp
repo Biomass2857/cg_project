@@ -28,7 +28,7 @@ void ShaderProgram::setMatrix4(const std::string &name, const glm::mat4 matrix) 
 }
 
 void ShaderProgram::setTexture(const std::string &name, const Texture& texture) const {
-    glUniform1i(glGetUniformLocation(ID, name.c_str()), 0);
+    glUniform1i(glGetUniformLocation(ID, name.c_str()), 0/*texture.slot*/);
 }
 
 void ShaderProgram::checkLinked() const {

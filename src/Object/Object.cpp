@@ -113,22 +113,34 @@ void Object::setShader(const ShaderProgram& shader) {
     this->shader = &shader;
 }
 
+void Object::rotate(float angle, glm::vec3 axis) {
+    transformation = glm::rotate(transformation, angle, axis);
+}
+
+void Object::translate(glm::vec3 translation) {
+    transformation = glm::translate(transformation, translation);
+}
+
 void Object::scale(float factor) {
     transformation = glm::scale(transformation, glm::vec3(factor));
 }
 
-void Object::render() {
+void Object::render(Camera& camera) {
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBindVertexArray(VAO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 
-    shader->use();
-    
     if(textureEnabled) {
         texture->bind();
         shader->setTexture("tex0", *texture);
+        std::cout <<"binding texture"<< std::endl;
+    } else {
+        std::cout <<"not binding texture"<< std::endl;
     }
 
+    shader->use();
+
+    shader->setMatrix4("camMatrix", camera.getMatrix());
     shader->setMatrix4("modelview", transformation);
 
     glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);

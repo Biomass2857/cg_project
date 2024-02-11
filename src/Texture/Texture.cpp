@@ -1,17 +1,24 @@
 #include "Texture.hpp"
 
+GLint nextSlot() {
+    static GLint __used_slots = 0;
+    std::cout << "GL_TEXTURE" << __used_slots <<" used"<< std::endl;
+    return __used_slots++;
+}
+
 Texture::Texture(const uint8_t* data, unsigned int width, unsigned int height, unsigned short channels) {
     this->data = data;
     this->width = width;
     this->height = height;
     this->channels = channels;
+    this->slot = nextSlot();
 
     init();
 }
 
 void Texture::init() {
     glGenTextures(1, &ID);
-    glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE0 /*+ slot*/);
     glBindTexture(GL_TEXTURE_2D, ID);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -20,20 +27,10 @@ void Texture::init() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    std::cout <<"Data: "<< std::endl;
-    for(int i = 0; i < 50; i++) {
-        std::cout << std::hex << (unsigned short) data[i] << " ";
-    }
-    std::cout << std::endl;
-
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
 
     glBindTexture(GL_TEXTURE_2D, 0);
-}
-
-unsigned int Texture::getID() const {
-    return ID;
 }
 
 void Texture::bind() const {

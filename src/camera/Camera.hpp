@@ -15,6 +15,8 @@
 
 class Camera {
     public:
+        Camera(int width, int height, glm::vec3 position, float FOVdeg, float nearPlane, float farPlane);
+
         // Stores the main vectors of the camera
         glm::vec3 Position;
         glm::vec3 Orientation = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -31,18 +33,11 @@ class Camera {
         float speed = 0.1f;
         float sensitivity = 100.0f;
 
-        // Camera constructor to set up initial values
-        Camera(int width, int height, glm::vec3 position);
+        float FOVdeg, nearPlane, farPlane;
 
-        void addShader(ShaderProgram& shader);
-        
-        // Updates and exports the camera matrix to the Vertex Shader
-        void updateCameraMatrix(float FOVdeg, float nearPlane, float farPlane, const char* uniform);
-        // Handles camera inputs
         void getKeyInput(GLFWwindow* window);
-
-    private:
-        std::vector<ShaderProgram*> shaders;
+        
+        glm::mat4 getMatrix() const;
 };
 
 #endif

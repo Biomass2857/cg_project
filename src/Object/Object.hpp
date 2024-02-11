@@ -19,6 +19,7 @@
 #include "../ObjLoader/ObjLoader.hpp"
 #include "../ShaderProgram/ShaderProgram.hpp"
 #include "../Texture/Texture.hpp"
+#include "../Camera/Camera.hpp"
 
 enum class VertexFeature { Position = 0, Normal = 1, Color = 2, UV = 3 };
 
@@ -38,9 +39,11 @@ class Object {
         void setTexture(const Texture& texture);
         void setShader(const ShaderProgram& shader);
 
+        void rotate(float angle, glm::vec3 axis);
+        void translate(glm::vec3 translation);
         void scale(float factor);
 
-        void render();
+        void render(Camera& camera);
         void free();
     private:
         void init(

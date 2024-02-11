@@ -6,3 +6,9 @@ CMake
 C++
 
 BufferData braucht die size in bytes und nicht die anzahl an elementen :))
+
+reihenfolge der befehle :)))):
+    - glUseProgram
+    - glUniform
+    - glActiveTexture
+    - glBindTexture

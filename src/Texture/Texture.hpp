@@ -17,8 +17,6 @@ class Texture {
     public:
         Texture(const uint8_t* data, unsigned int width, unsigned int height, unsigned short channels);
 
-        unsigned int getID() const;
-
         void bind() const;
 
         void free();
@@ -32,6 +30,8 @@ class Texture {
         unsigned int width, height;
 
         unsigned int ID;
+
+        GLint slot;
 };
 
 #endif

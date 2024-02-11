@@ -62,4 +62,5 @@ Box::Box(float len, Texture texture) : Object({
     21, 22, 23
 }, { VertexFeature::Position, VertexFeature::Normal, VertexFeature::UV }) {
     setTexture(texture);
+    translate(glm::vec3(0.5f, 0.5f, 0.5f));
 }

@@ -1,28 +1,18 @@
 #include"Camera.hpp"
 
-Camera::Camera(int width, int height, glm::vec3 position) {
-	Camera::width = width;
-	Camera::height = height;
-	Position = position;
-}
+Camera::Camera(int width, int height, glm::vec3 position, float FOVdeg, float nearPlane, float farPlane): 
+    width(width),
+    height(height),
+    Position(position),
+    FOVdeg(FOVdeg),
+    nearPlane(nearPlane),
+    farPlane(farPlane)
+{}
 
-void Camera::addShader(ShaderProgram& shader) {
-    shaders.push_back(&shader);
-}
-
-void Camera::updateCameraMatrix(float FOVdeg, float nearPlane, float farPlane, const char* uniform) {
-	// Initializes matrices since otherwise they will be the null matrix
-	glm::mat4 view = glm::mat4(1.0f);
-	glm::mat4 projection = glm::mat4(1.0f);
-
-	// Makes camera look in the right direction from the right position
-	view = glm::lookAt(Position, Position + Orientation, Up);
-	// Adds perspective to the scene
-	projection = glm::perspective(glm::radians(FOVdeg), (float)width / height, nearPlane, farPlane);
-
-    for(ShaderProgram* shader : shaders) {
-        shader->setMatrix4(uniform, (projection * view));
-    }
+glm::mat4 Camera::getMatrix() const {
+    glm::mat4 view = glm::lookAt(Position, Position + Orientation, Up);
+    glm::mat4 projection = glm::perspective(glm::radians(FOVdeg), (float)width / height, nearPlane, farPlane);
+    return projection * view;
 }
 
 void Camera::getKeyInput(GLFWwindow* window) {
