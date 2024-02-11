@@ -128,7 +128,7 @@ int main() {
     tank.scale(0.05f);
 
     std::vector<struct TextureConfiguration> environmentTextureConfigurations = {
-        TextureConfiguration("background_dark", 5, 5, 1024, 512)
+        TextureConfiguration("background_dark", 5, 276, 1024, 512)
         // TextureConfiguration("background_light", 5, 1029, 1024, 512)
     };
 
@@ -137,9 +137,9 @@ int main() {
 
     std::vector<float> floor_vertices = {
         0.0f, 0.f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-        0.0f, 10.f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-        5.f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
-        5.f, 10.f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f
+        0.0f, 5.f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+        10.f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+        10.f, 5.f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f
     };
 
     std::vector<unsigned int> floor_indices = {
@@ -183,11 +183,13 @@ int main() {
         textureShaderProgram.setFloat("u_time", u_time);
 
         camera.getKeyInput(window);
-        camera.updateCameraMatrix(45.f, 0.1f, 100.0f, "camMatrix");
         
         // cube.render();
-        // tank.render();
+        tank.render();
+        camera.updateCameraMatrix(45.f, 0.1f, 100.0f, "camMatrix");
+
         floor.render();
+        camera.updateCameraMatrix(45.f, 0.1f, 100.0f, "camMatrix");
 
         glfwSwapBuffers(window);
         glfwPollEvents();
