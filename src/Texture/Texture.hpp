@@ -11,17 +11,27 @@
 #endif
 
 #include <stdint.h>
+#include "../Util/Util.hpp"
 
-// class Texture {
-//     public:
-//         Texture(const uint8_t* data, unsigned int width, unsigned int height, unsigned short channels);
+class Texture {
+    public:
+        Texture(const uint8_t* data, unsigned int width, unsigned int height, unsigned short channels);
 
-//         void free();
-//     private:
-//         uint8_t *data;
+        unsigned int getID() const;
 
-//         unsigned short channels;
-//         unsigned int width, height;
-// };
+        void bind() const;
+
+        void free();
+
+        friend class ShaderProgram;
+    private:
+        void init();
+        const uint8_t *data;
+
+        unsigned short channels;
+        unsigned int width, height;
+
+        unsigned int ID;
+};
 
 #endif

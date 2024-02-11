@@ -1,49 +1,82 @@
 #include "Object.hpp"
 
-Object::Object(
-    const std::vector<float> vertices,
-    const std::vector<unsigned int> indices
-) {
-    init(vertices, indices);
+unsigned short getVertexFeatureSize(VertexFeature feature) {
+    switch(feature) {
+        case VertexFeature::Position:
+            return 3;
+        case VertexFeature::Normal:
+            return 3;
+        case VertexFeature::Color:
+            return 3;
+        case VertexFeature::UV:
+            return 2;
+    }
+
+    return 0;
 }
 
-Object::Object(const std::string& obj_file_path) {
+Object::Object(
+    const std::vector<float> vertices,
+    const std::vector<unsigned int> indices,
+    const std::vector<VertexFeature> features
+) {
+    init(vertices, indices, features);
+}
+
+Object::Object(
+    const std::string& obj_file_path,
+    const std::vector<VertexFeature> features
+) {
     ObjLoader loader(obj_file_path);
 
     std::vector<float> vertices;
     std::vector<unsigned int> indices;
 
+    bool positionEnabled = std::find(features.begin(), features.end(), VertexFeature::Position) != features.end();
+    bool normalEnabled = std::find(features.begin(), features.end(), VertexFeature::Normal) != features.end();
+    bool colorEnabled = std::find(features.begin(), features.end(), VertexFeature::Color) != features.end();
+    bool uvEnabled = std::find(features.begin(), features.end(), VertexFeature::UV) != features.end();
+
     for(struct ObjFace face : loader.faces) {
         for(struct ObjVertex vertex : face.vertices) {
-            vertices.push_back(loader.vertices[vertex.vertexIndex].x);
-            vertices.push_back(loader.vertices[vertex.vertexIndex].y);
-            vertices.push_back(loader.vertices[vertex.vertexIndex].z);
+            if(positionEnabled) {
+                vertices.push_back(loader.vertices[vertex.vertexIndex].x);
+                vertices.push_back(loader.vertices[vertex.vertexIndex].y);
+                vertices.push_back(loader.vertices[vertex.vertexIndex].z);
+            }
 
-            // use normals as color for now
-            vertices.push_back(loader.normals[vertex.normalIndex].x);
-            vertices.push_back(loader.normals[vertex.normalIndex].y);
-            vertices.push_back(loader.normals[vertex.normalIndex].z);
+            if(normalEnabled) {
+                vertices.push_back(loader.normals[vertex.normalIndex].x);
+                vertices.push_back(loader.normals[vertex.normalIndex].y);
+                vertices.push_back(loader.normals[vertex.normalIndex].z);
+            }
 
-            vertices.push_back(loader.normals[vertex.normalIndex].x);
-            vertices.push_back(loader.normals[vertex.normalIndex].y);
-            vertices.push_back(loader.normals[vertex.normalIndex].z);
+            // TODO: use correct color
+            if(colorEnabled) {
+                vertices.push_back(loader.normals[vertex.normalIndex].x);
+                vertices.push_back(loader.normals[vertex.normalIndex].y);
+                vertices.push_back(loader.normals[vertex.normalIndex].z);
+            }
 
-            // Add later
-            // vertices.push_back(loader.uvs[vertex.uvIndex].x);
-            // vertices.push_back(loader.uvs[vertex.uvIndex].y);
+            if(uvEnabled) {
+                vertices.push_back(loader.uvs[vertex.uvIndex].x);
+                vertices.push_back(loader.uvs[vertex.uvIndex].y);
+            }
 
             indices.push_back(indices.size());
         }
     }
 
-    init(vertices, indices);
+    init(vertices, indices, features);
 }
 
 void Object::init(
     const std::vector<float> vertices,
-    const std::vector<unsigned int> indices
+    const std::vector<unsigned int> indices,
+    const std::vector<VertexFeature> features
 ) {
     this->transformation = glm::mat4(1.0f);
+
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
 
@@ -51,22 +84,29 @@ void Object::init(
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
 
-    // positions
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);
+    unsigned short stride = 0;
+    for(VertexFeature feature : features) {
+        stride += getVertexFeatureSize(feature);
+    }
 
-    // colors
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(3 * sizeof(float)));
-
-    // normals
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(6 * sizeof(float)));
+    unsigned short initialOffset = 0;
+    for(VertexFeature feature : features) {
+        unsigned short size = getVertexFeatureSize(feature);
+        glEnableVertexAttribArray((int) feature);
+        glVertexAttribPointer((int) feature, size, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(initialOffset * sizeof(float)));
+        initialOffset += size;
+    }
 
     indexCount = indices.size();
     glGenBuffers(1, &IBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+
+    textureEnabled = std::find(features.begin(), features.end(), VertexFeature::UV) != features.end();
+}
+
+void Object::setTexture(const Texture& texture) {
+    this->texture = &texture;
 }
 
 void Object::setShader(const ShaderProgram& shader) {
@@ -82,8 +122,14 @@ void Object::render() {
     glBindVertexArray(VAO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 
-    shader->setMatrix4("modelview", transformation);
     shader->use();
+    
+    if(textureEnabled) {
+        texture->bind();
+        shader->setTexture("tex0", *texture);
+    }
+
+    shader->setMatrix4("modelview", transformation);
 
     glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
 
