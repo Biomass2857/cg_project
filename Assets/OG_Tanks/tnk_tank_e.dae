@@ -75,7 +75,7 @@
 						<wrap_t>CLAMP</wrap_t>
 						<minfilter>LINEAR</minfilter>
 						<magfilter>LINEAR</magfilter>
-					</sampler2D>
+					</sampler2D>å
 				</newparam>
 				<technique sid="COMMON">
 					<phong>

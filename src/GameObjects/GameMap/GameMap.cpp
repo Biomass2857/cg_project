@@ -3,9 +3,9 @@
 GameMap::GameMap(TextureAtlas &atlas, ShaderProgram& colorShader, ShaderProgram& textureShader):
     floor({
             0.0f, 0.f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-            0.0f, 1.f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-            2.f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
-            2.f, 1.f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f
+            0.0f, 10.f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+            20.f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+            20.f, 10.f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f
         }, {
             0, 1, 2,
             1, 2, 3
@@ -18,25 +18,23 @@ GameMap::GameMap(TextureAtlas &atlas, ShaderProgram& colorShader, ShaderProgram&
     Texture environmentTexture = this->atlas->getTexture("floor_dark");
     floor.setTexture(environmentTexture);
 
-    floor.scale(10.0f);
-
-    Tank tank;
-    tank.translate(glm::vec3(300.0f, 150.0f, 0.0f));
-
-    Object shell = Object("../assets/Shell/shell.obj", { VertexFeature::Position, VertexFeature::Normal, VertexFeature::Color });
-    shell.scale(0.05f);
+    Shell shell;
 
     floor.setShader(textureShader);
-    tank.setShader(colorShader);
     shell.setShader(colorShader);
 
-    tanks.push_back(tank);
     shells.push_back(shell);
 
     generateWall();
+
+    std::vector<Game::Tank> gameTanks = generateTanks();
+    Game::State initialState(Game::State { gameTanks });
+    gameLoop.start(initialState);
 }
 
 void GameMap::render(Camera& camera) {
+    preprareShowState(gameLoop.getGameSnapshot());
+
     floor.render(camera);
 
     for(Object& box : boxes) {
@@ -73,4 +71,32 @@ void GameMap::generateWall() {
             }
         }
     }
+}
+
+void GameMap::preprareShowState(Game::State state) {
+    for(int i = 0; i < state.tanks.size(); i++) {
+        tanks[i].translate(glm::vec3(state.tanks[i].pos.x, state.tanks[i].pos.y, 0.0f));
+    }
+
+    // TODO: add more
+}
+
+std::vector<struct Game::Tank> GameMap::generateTanks() {
+    std::vector<struct Game::Tank> gameTanks;
+
+    for(int i = 0; i < 4; i++) {
+        glm::vec2 relativePos = glm::vec2(0.25f + 0.5f * (i / 2), 0.25f + 0.5f * (i % 2));
+        struct Game::Tank tank(i, Game::mapSize * relativePos);
+        gameTanks.push_back(tank);
+
+        Tank tankObject;
+        tankObject.setShader(*colorShader);
+        tankObject.scale(0.5f);
+
+        tankObject.translate(glm::vec3(relativePos.x * 20.f, relativePos.y * 10.f, 0.0f));
+
+        tanks.push_back(tankObject);
+    }
+
+    return gameTanks;
 }

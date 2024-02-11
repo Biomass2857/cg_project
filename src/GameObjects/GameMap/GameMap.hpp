@@ -9,6 +9,9 @@
 #include "../../ShaderProgram/ShaderProgram.hpp"
 #include "../../Texture/Texture.hpp"
 #include "../../Camera/Camera.hpp"
+#include "../Shell/Shell.hpp"
+#include "../../Logic/Game.hpp"
+#include "../../Logic/GameLoop/GameLoop.hpp"
 
 class GameMap {
     public:
@@ -17,7 +20,9 @@ class GameMap {
         void render(Camera& camera);
         void free();
     private:
+        void preprareShowState(Game::State state);
         void generateWall();
+        std::vector<struct Game::Tank> generateTanks();
 
         float mapWidth = 20.f;
         float mapHeight = 10.f;
@@ -28,8 +33,10 @@ class GameMap {
         TextureAtlas* atlas;
         Object floor;
         std::vector<Tank> tanks;
-        std::vector<Object> shells;
+        std::vector<Shell> shells;
         std::vector<Box> boxes;
+
+        GameLoop gameLoop;
 };
 
 #endif

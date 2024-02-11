@@ -57,6 +57,9 @@ class Object {
         const Texture* texture;
         const ShaderProgram* shader;
 
+        // TODO: remove this member later again, right now its just for hacky purposes
+        float currentScale;
+
         unsigned int indexCount;
         unsigned int VAO, VBO, IBO;
 };

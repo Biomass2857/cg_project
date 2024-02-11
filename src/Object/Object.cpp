@@ -103,6 +103,8 @@ void Object::init(
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
 
     textureEnabled = std::find(features.begin(), features.end(), VertexFeature::UV) != features.end();
+
+    currentScale = 1.0f;
 }
 
 void Object::setTexture(const Texture& texture) {
@@ -118,11 +120,12 @@ void Object::rotate(float angle, glm::vec3 axis) {
 }
 
 void Object::translate(glm::vec3 translation) {
-    transformation = glm::translate(transformation, translation);
+    transformation = glm::translate(transformation, translation / currentScale);
 }
 
 void Object::scale(float factor) {
     transformation = glm::scale(transformation, glm::vec3(factor));
+    currentScale *= factor;
 }
 
 void Object::render(Camera& camera) {
