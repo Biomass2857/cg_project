@@ -16,38 +16,37 @@ glm::mat4 Camera::getMatrix() const {
 }
 
 void Camera::getKeyInput(GLFWwindow* window, float timestep) {
-	if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-		Position += currentSpeed * timestep * Orientation;
-	}
+    if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+        if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+            Position += currentSpeed * timestep * Orientation;
+        }
 
-	if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-		Position += currentSpeed * timestep * -glm::normalize(glm::cross(Orientation, Up));
-	}
+        if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+            Position += currentSpeed * timestep * -glm::normalize(glm::cross(Orientation, Up));
+        }
 
-	if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-		Position += currentSpeed * timestep * -Orientation;
-	}
+        if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+            Position += currentSpeed * timestep * -Orientation;
+        }
 
-	if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-		Position += currentSpeed * timestep * glm::normalize(glm::cross(Orientation, Up));
-	}
+        if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+            Position += currentSpeed * timestep * glm::normalize(glm::cross(Orientation, Up));
+        }
 
-	if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-		Position += currentSpeed * timestep * Up;
-	}
+        if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+            Position += currentSpeed * timestep * Up;
+        }
 
-	if(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
-		Position += currentSpeed * timestep * -Up;
-	}
+        if(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
+            Position += currentSpeed * timestep * -Up;
+        }
 
-	if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-		currentSpeed = fastMoveSpeed;
-	} else if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE) {
-		currentSpeed = slowMoveSpeed;
-	}
+        if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+            currentSpeed = fastMoveSpeed;
+        } else if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE) {
+            currentSpeed = slowMoveSpeed;
+        }
 
-	// Handles mouse inputs
-	if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
 		// Hides mouse cursor
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
