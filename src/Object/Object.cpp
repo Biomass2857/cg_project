@@ -119,6 +119,10 @@ void Object::rotate(float angle, glm::vec3 axis) {
     transformation = glm::rotate(transformation, angle, axis);
 }
 
+void Object::setTranslation(glm::vec3 translation) {
+    transformation = glm::translate(glm::mat4(1.0f), translation);
+}
+
 void Object::translate(glm::vec3 translation) {
     transformation = glm::translate(transformation, translation / currentScale);
 }

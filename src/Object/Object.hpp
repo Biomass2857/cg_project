@@ -40,6 +40,8 @@ class Object {
         void setShader(const ShaderProgram& shader);
 
         void rotate(float angle, glm::vec3 axis);
+
+        void setTranslation(glm::vec3 translation);
         void translate(glm::vec3 translation);
         void scale(float factor);
 

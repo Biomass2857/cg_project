@@ -19,6 +19,7 @@ void GameLoop::start(Game::State initialState) {
             std::unique_lock<std::mutex> lock(mutex);
 
             std::vector<Game::Event> mergedEvents = this->getEvents();
+            std::cout <<"[GameLoop] Merged events: " << mergedEvents.size() << std::endl;
             world.tick(mergedEvents);
             snapshot = world.getState();
             this->clearEvents();

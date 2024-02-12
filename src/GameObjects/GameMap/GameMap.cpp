@@ -75,7 +75,7 @@ void GameMap::generateWall() {
 
 void GameMap::preprareShowState(Game::State state) {
     for(int i = 0; i < state.tanks.size(); i++) {
-        tanks[i].translate(glm::vec3(state.tanks[i].pos.x, state.tanks[i].pos.y, 0.0f));
+        tanks[i].setTranslation(glm::vec3(state.tanks[i].pos.x, state.tanks[i].pos.y, 0.0f));
     }
 
     // TODO: add more
