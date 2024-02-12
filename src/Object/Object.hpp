@@ -33,7 +33,8 @@ class Object {
 
         Object(
             const std::string& obj_file_path,
-            const std::vector<VertexFeature> features = { VertexFeature::Position, VertexFeature::Normal, VertexFeature::UV }
+            const std::vector<VertexFeature> features = { VertexFeature::Position, VertexFeature::Normal, VertexFeature::UV },
+            float scaleOnLoad = 1.0f
         );
 
         void setTexture(const Texture& texture);

@@ -8,7 +8,7 @@ brew install glew
 
 brew install glfw
 
-brew install 
+brew install glm
 
 clone project
 

@@ -24,10 +24,11 @@ Object::Object(
 }
 
 Object::Object(
-    const std::string& obj_file_path,
-    const std::vector<VertexFeature> features
+    const std::string& objFilePath,
+    const std::vector<VertexFeature> features,
+    float scaleOnLoad
 ) {
-    ObjLoader loader(obj_file_path);
+    ObjLoader loader(objFilePath);
 
     std::vector<float> vertices;
     std::vector<unsigned int> indices;
@@ -40,9 +41,9 @@ Object::Object(
     for(struct ObjFace face : loader.faces) {
         for(struct ObjVertex vertex : face.vertices) {
             if(positionEnabled) {
-                vertices.push_back(loader.vertices[vertex.vertexIndex].x);
-                vertices.push_back(loader.vertices[vertex.vertexIndex].y);
-                vertices.push_back(loader.vertices[vertex.vertexIndex].z);
+                vertices.push_back(scaleOnLoad * loader.vertices[vertex.vertexIndex].x);
+                vertices.push_back(scaleOnLoad * loader.vertices[vertex.vertexIndex].y);
+                vertices.push_back(scaleOnLoad * loader.vertices[vertex.vertexIndex].z);
             }
 
             if(normalEnabled) {
