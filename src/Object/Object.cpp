@@ -76,7 +76,8 @@ void Object::init(
     const std::vector<unsigned int> indices,
     const std::vector<VertexFeature> features
 ) {
-    this->transformation = glm::mat4(1.0f);
+    this->rotation = glm::mat4(1.0f);
+    this->scaling = glm::mat4(1.0f);
     this->translation = glm::mat4(1.0f);
 
     glGenVertexArrays(1, &VAO);
@@ -115,8 +116,12 @@ void Object::setShader(const ShaderProgram& shader) {
     this->shader = &shader;
 }
 
+void Object::setRotation(float angle, glm::vec3 axis) {
+    rotation = glm::rotate(glm::mat4(1.0f), angle, axis);
+}
+
 void Object::rotate(float angle, glm::vec3 axis) {
-    transformation = glm::rotate(transformation, angle, axis);
+    rotation = glm::rotate(rotation, angle, axis);
 }
 
 void Object::setTranslation(glm::vec3 translation) {
@@ -128,12 +133,12 @@ void Object::translate(glm::vec3 translation) {
 }
 
 void Object::scale(float factor) {
-    transformation = glm::scale(transformation, glm::vec3(factor));
+    this->scaling = glm::scale(this->scaling, glm::vec3(factor));
 
     // bug source
     // normalize w component
     for(int i = 0; i < 3; i++) {
-        transformation[i][3] /= factor;
+        scaling[i][3] /= factor;
     }
 }
 
@@ -153,7 +158,7 @@ void Object::render(Camera& camera) {
     shader->use();
 
     shader->setMatrix4("camMatrix", camera.getMatrix());
-    shader->setMatrix4("modelview", translation * transformation);
+    shader->setMatrix4("modelview", translation * rotation * scaling);
 
     glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
 

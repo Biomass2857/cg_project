@@ -6,8 +6,8 @@ namespace Game {
         this->pos = pos;
         
         size = glm::vec2(1.0f, 1.0f);
-        gunDirection = glm::vec2(0.0f, 1.0f);
-        wheelDirection = glm::vec2(0.0f, 1.0f);
+        gunDirection = glm::vec2(0.0f, -1.0f);
+        wheelDirection = glm::vec2(0.0f, -1.0f);
         speed = tankSpeed;
 
         isAlive = true;

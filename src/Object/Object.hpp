@@ -40,6 +40,7 @@ class Object {
         void setTexture(const Texture& texture);
         void setShader(const ShaderProgram& shader);
 
+        void setRotation(float angle, glm::vec3 axis);
         void rotate(float angle, glm::vec3 axis);
 
         void setTranslation(glm::vec3 translation);
@@ -55,8 +56,10 @@ class Object {
             const std::vector<VertexFeature> features
         );
 
-        glm::mat4 transformation;
+        glm::mat4 scaling;
+        glm::mat4 rotation;
         glm::mat4 translation;
+
         bool textureEnabled;
         const Texture* texture;
         const ShaderProgram* shader;

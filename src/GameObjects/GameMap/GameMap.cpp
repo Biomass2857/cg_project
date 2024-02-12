@@ -75,11 +75,14 @@ void GameMap::generateWall() {
 
 void GameMap::preprareShowState(Game::State state) {
     for(int i = 0; i < state.tanks.size(); i++) {
+        Game::Tank& stateTank = state.tanks[i];
+
         glm::vec2 relativePos = state.tanks[i].pos / Game::mapSize;
         tanks[i].setTranslation(glm::vec3(relativePos * size, 0.0f));
-    }
 
-    // TODO: add more
+        float rotationAngle = glm::atan(stateTank.wheelDirection.y, stateTank.wheelDirection.x) - 3.0 * glm::pi<float>() / 2.0f;
+        tanks[i].setRotation(rotationAngle, glm::vec3(0.0f, 0.0f, 1.0f));
+    }
 }
 
 std::vector<struct Game::Tank> GameMap::generateTanks() {
@@ -100,10 +103,31 @@ std::vector<struct Game::Tank> GameMap::generateTanks() {
 }
 
 void GameMap::getInput(GLFWwindow* window) {
-	if(glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS) {
+	if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
         Game::Event event;
         event.tankId = 0;
         event.type = Game::EventType::FORWARD;
         gameLoop.accumulateEvents({ event });
 	}
+
+    if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        Game::Event event;
+        event.tankId = 0;
+        event.type = Game::EventType::BACKWARD;
+        gameLoop.accumulateEvents({ event });
+    }
+
+    if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        Game::Event event;
+        event.tankId = 0;
+        event.type = Game::EventType::ROTATE_WHEELS_CCLOCKWISE;
+        gameLoop.accumulateEvents({ event });
+    }
+
+    if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        Game::Event event;
+        event.tankId = 0;
+        event.type = Game::EventType::ROTATE_WHEELS_CLOCKWISE;
+        gameLoop.accumulateEvents({ event });
+    }
 }
