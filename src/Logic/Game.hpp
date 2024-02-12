@@ -14,9 +14,9 @@ namespace Game {
     struct Bullet;
 
     const float gameFrequency = 300.0f;
-    const float tankSpeed = 200.0f / gameFrequency / 8.f;
+    const float tankSpeed = 200.0f / gameFrequency / 4.f;
     const float bulletSpeed = 2.5f * tankSpeed;
-    const float tankRotationSpeed = 2.0f * glm::pi<float>() / gameFrequency / 3.f;
+    const float tankRotationSpeed = 2.0f * glm::pi<float>() / gameFrequency / 1.5f;
     const unsigned short maxBullets = 5;
     const glm::vec2 mapSize = glm::vec2(200.0f, 100.0f);
 
