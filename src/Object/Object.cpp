@@ -77,6 +77,7 @@ void Object::init(
     const std::vector<VertexFeature> features
 ) {
     this->transformation = glm::mat4(1.0f);
+    this->translation = glm::mat4(1.0f);
 
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
@@ -104,8 +105,6 @@ void Object::init(
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
 
     textureEnabled = std::find(features.begin(), features.end(), VertexFeature::UV) != features.end();
-
-    currentScale = 1.0f;
 }
 
 void Object::setTexture(const Texture& texture) {
@@ -121,16 +120,21 @@ void Object::rotate(float angle, glm::vec3 axis) {
 }
 
 void Object::setTranslation(glm::vec3 translation) {
-    transformation = glm::translate(glm::mat4(1.0f), translation);
+    this->translation = glm::translate(glm::mat4(1.0f), translation);
 }
 
 void Object::translate(glm::vec3 translation) {
-    transformation = glm::translate(transformation, translation / currentScale);
+    this->translation = glm::translate(this->translation, translation);
 }
 
 void Object::scale(float factor) {
     transformation = glm::scale(transformation, glm::vec3(factor));
-    currentScale *= factor;
+
+    // bug source
+    // normalize w component
+    for(int i = 0; i < 3; i++) {
+        transformation[i][3] /= factor;
+    }
 }
 
 void Object::render(Camera& camera) {
@@ -149,7 +153,7 @@ void Object::render(Camera& camera) {
     shader->use();
 
     shader->setMatrix4("camMatrix", camera.getMatrix());
-    shader->setMatrix4("modelview", transformation);
+    shader->setMatrix4("modelview", translation * transformation);
 
     glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
 

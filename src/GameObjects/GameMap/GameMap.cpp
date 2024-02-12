@@ -57,8 +57,8 @@ void GameMap::free() {
 void GameMap::generateWall() {
     Texture boxTexture = this->atlas->getTexture("box_texture_light");
 
-    unsigned int blockCountX = static_cast<unsigned int>(mapWidth / boxWidth);
-    unsigned int blockCountY = static_cast<unsigned int>(mapHeight / boxWidth);
+    unsigned int blockCountX = static_cast<unsigned int>(size.x / boxWidth);
+    unsigned int blockCountY = static_cast<unsigned int>(size.y / boxWidth);
 
     for(unsigned int i = 0; i < blockCountX; i++) {
         for(unsigned int j = 0; j < blockCountY; j++) {
@@ -75,7 +75,8 @@ void GameMap::generateWall() {
 
 void GameMap::preprareShowState(Game::State state) {
     for(int i = 0; i < state.tanks.size(); i++) {
-        tanks[i].setTranslation(glm::vec3(state.tanks[i].pos.x, state.tanks[i].pos.y, 0.0f));
+        glm::vec2 relativePos = state.tanks[i].pos / Game::mapSize;
+        tanks[i].setTranslation(glm::vec3(relativePos * size, 0.0f));
     }
 
     // TODO: add more
@@ -92,9 +93,6 @@ std::vector<struct Game::Tank> GameMap::generateTanks() {
         Tank tankObject;
         tankObject.setShader(*colorShader);
         tankObject.scale(0.5f);
-
-        tankObject.translate(glm::vec3(relativePos.x * 20.f, relativePos.y * 10.f, 0.0f));
-
         tanks.push_back(tankObject);
     }
 

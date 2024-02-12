@@ -37,8 +37,7 @@ class GameMap {
         void generateWall();
         std::vector<struct Game::Tank> generateTanks();
 
-        float mapWidth = 20.f;
-        float mapHeight = 10.f;
+        glm::vec2 size = glm::vec2(20.0f, 10.0f);
         float boxWidth = 1.0f;
 
         ShaderProgram* colorShader;

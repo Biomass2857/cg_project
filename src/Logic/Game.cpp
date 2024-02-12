@@ -3,8 +3,8 @@
 namespace Game {
     Tank::Tank(int id, glm::vec2 pos) {
         this->id = id;
-
-        pos = glm::vec2(0.0f, 0.0f);
+        this->pos = pos;
+        
         size = glm::vec2(1.0f, 1.0f);
         gunDirection = glm::vec2(0.0f, 1.0f);
         wheelDirection = glm::vec2(0.0f, 1.0f);

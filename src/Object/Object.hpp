@@ -32,7 +32,7 @@ class Object {
         );
 
         Object(
-            const std::string& obj_file_path,
+            const std::string& objFilePath,
             const std::vector<VertexFeature> features = { VertexFeature::Position, VertexFeature::Normal, VertexFeature::UV },
             float scaleOnLoad = 1.0f
         );
@@ -56,12 +56,10 @@ class Object {
         );
 
         glm::mat4 transformation;
+        glm::mat4 translation;
         bool textureEnabled;
         const Texture* texture;
         const ShaderProgram* shader;
-
-        // TODO: remove this member later again, right now its just for hacky purposes
-        float currentScale;
 
         unsigned int indexCount;
         unsigned int VAO, VBO, IBO;

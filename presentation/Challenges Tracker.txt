@@ -12,3 +12,5 @@ reihenfolge der befehle :)))):
     - glUniform
     - glActiveTexture
     - glBindTexture
+
+transformationsmatrizen richtig anwenden auf objekte
