@@ -154,4 +154,6 @@ std::vector<struct ObjMaterial> ObjLoader::readMaterials(const std::string path)
             #endif
         }
     }
+
+    return materials;
 }
