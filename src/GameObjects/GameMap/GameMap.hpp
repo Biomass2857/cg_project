@@ -1,6 +1,17 @@
 #ifndef GAMEMAP_HPP
 #define GAMEMAP_HPP
 
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+
+#ifdef __APPLE__
+#include <OpenGL/gl.h>
+#elif __linux__
+#include <GL/gl.h>
+#elif _WIN32
+#include <GL/gl.h>
+#endif
+
 #include <vector>
 #include "../../Object/Object.hpp"
 #include "../Box/Box.hpp"
@@ -16,6 +27,8 @@
 class GameMap {
     public:
         GameMap(TextureAtlas &atlas, ShaderProgram& colorShader, ShaderProgram& textureShader);
+
+        void getInput(GLFWwindow* window);
 
         void render(Camera& camera);
         void free();

@@ -97,6 +97,8 @@ int main() {
         defaultShaderProgram.setFloat("u_time", u_time);
         textureShaderProgram.setFloat("u_time", u_time);
 
+        gameMap.getInput(window);
+
         camera.getKeyInput(window, deltaTime);
 
         gameMap.render(camera);

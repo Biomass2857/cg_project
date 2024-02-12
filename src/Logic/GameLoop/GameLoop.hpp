@@ -7,6 +7,7 @@
 #include <chrono>
 #include <mutex>
 #include <iostream>
+#include <algorithm>
 
 #include "../Game.hpp"
 

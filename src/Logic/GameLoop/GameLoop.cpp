@@ -16,21 +16,23 @@ void GameLoop::start(Game::State initialState) {
         float tickTimeMs = 1000.f / Game::gameFrequency;
 
         while(running.load()) {
-            // std::unique_lock<std::mutex> lock(mutex);
+            std::unique_lock<std::mutex> lock(mutex);
 
-            // std::vector<Game::Event> mergedEvents = this->getEvents();
-            // world.tick(mergedEvents);
-            // snapshot = world.getState();
-            // eventBuffer.clear();
+            std::vector<Game::Event> mergedEvents = this->getEvents();
+            world.tick(mergedEvents);
+            snapshot = world.getState();
+            this->clearEvents();
 
-            float timeTaken = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - lastTime).count();
+            lock.unlock();
+
+            auto now = std::chrono::steady_clock::now();
+            float timeTaken = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastTime).count();
+            lastTime = now;
 
             std::cout <<"[GameLoop] Time taken: " << timeTaken << "ms"<< std::endl;
 
-            // lock.unlock();
-
             if(timeTaken < tickTimeMs) {
-                std::chrono::milliseconds sleepTime((long long) (tickTimeMs - timeTaken));
+                std::chrono::milliseconds sleepTime((long long) std::max(0.f, tickTimeMs - timeTaken));
                 std::this_thread::sleep_for(sleepTime);
             }
         }
