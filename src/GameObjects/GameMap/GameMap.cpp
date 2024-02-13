@@ -18,7 +18,7 @@ GameMap::GameMap(TextureAtlas &atlas, ShaderProgram& colorShader, ShaderProgram&
     Texture environmentTexture = this->atlas->getTexture("floor_dark");
     floor.setTexture(environmentTexture);
 
-    floor.setShader(textureShader);
+    floor.setShader(colorShader);
 
     generateWall();
 
@@ -83,7 +83,7 @@ void GameMap::preprareShowState(Game::State state) {
 
             if(!shellExists) {
                 Shell shell;
-                shell.setShader(*textureShader);
+                shell.setShader(*colorShader);
                 shells[bullet.id] = shell;
             }
 
