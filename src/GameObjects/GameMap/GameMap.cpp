@@ -83,6 +83,7 @@ void GameMap::preprareShowState(Game::State state) {
 
             if(!shellExists) {
                 Shell shell;
+                shell.setRotation(glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
                 shell.setShader(*colorShader);
                 shells[bullet.id] = shell;
             }
