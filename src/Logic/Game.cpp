@@ -100,7 +100,7 @@ namespace Game {
                     bullet.richochets++;
                 }
 
-                if(bullet.richochets >= bullet.maxRichochets) {
+                if(bullet.richochets > bullet.maxRichochets) {
                     tank.bullets.erase(tank.bullets.begin() + i--);
                     continue;
                 }
