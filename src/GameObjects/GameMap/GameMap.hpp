@@ -13,6 +13,8 @@
 #endif
 
 #include <vector>
+#include <unordered_map>
+
 #include "../../Object/Object.hpp"
 #include "../Box/Box.hpp"
 #include "../Tank/Tank.hpp"
@@ -45,7 +47,7 @@ class GameMap {
         TextureAtlas* atlas;
         Object floor;
         std::vector<Tank> tanks;
-        std::vector<Shell> shells;
+        std::unordered_map<int, Shell> shells;
         std::vector<Box> boxes;
 
         GameLoop gameLoop;

@@ -18,12 +18,7 @@ GameMap::GameMap(TextureAtlas &atlas, ShaderProgram& colorShader, ShaderProgram&
     Texture environmentTexture = this->atlas->getTexture("floor_dark");
     floor.setTexture(environmentTexture);
 
-    Shell shell;
-
     floor.setShader(textureShader);
-    shell.setShader(colorShader);
-
-    shells.push_back(shell);
 
     generateWall();
 
@@ -45,9 +40,9 @@ void GameMap::render(Camera& camera) {
         tank.render(camera);
     }
 
-    // for(Object& shell : shells) {
-    //     shell.render(camera);
-    // }
+    for(auto& shell : shells) {
+        shell.second.render(camera);
+    }
 }
 
 void GameMap::free() {
@@ -82,6 +77,23 @@ void GameMap::preprareShowState(Game::State state) {
 
         float rotationAngle = glm::atan(stateTank.wheelDirection.y, stateTank.wheelDirection.x) - 3.0 * glm::pi<float>() / 2.0f;
         tanks[i].setRotation(rotationAngle, glm::vec3(0.0f, 0.0f, 1.0f));
+
+        for(Game::Bullet bullet : stateTank.bullets) {
+            bool shellExists = shells.find(bullet.id) != shells.end();
+
+            if(!shellExists) {
+                Shell shell;
+                shell.setShader(*textureShader);
+                shells[bullet.id] = shell;
+            }
+
+            Shell& shell = shells[bullet.id];
+            glm::vec2 relativePos = bullet.pos / Game::mapSize;
+            shell.setTranslation(glm::vec3(relativePos * size, 0.0f));
+
+            float rotationAngle = glm::atan(bullet.direction.y, bullet.direction.x) - 3.0 * glm::pi<float>() / 2.0f;
+            shell.setRotation(rotationAngle, glm::vec3(0.0f, 0.0f, 1.0f));
+        }
     }
 }
 
@@ -128,6 +140,13 @@ void GameMap::getInput(GLFWwindow* window) {
         Game::Event event;
         event.tankId = 0;
         event.type = Game::EventType::ROTATE_WHEELS_CLOCKWISE;
+        gameLoop.accumulateEvents({ event });
+    }
+
+    if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+        Game::Event event;
+        event.tankId = 0;
+        event.type = Game::EventType::SHOOT;
         gameLoop.accumulateEvents({ event });
     }
 }

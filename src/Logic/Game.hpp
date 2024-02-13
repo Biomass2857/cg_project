@@ -10,6 +10,7 @@
 
 namespace Game {
     typedef int TankID;
+    typedef int BulletID;
 
     struct Bullet;
 
@@ -36,13 +37,16 @@ namespace Game {
     };
 
     struct Bullet {
+        BulletID id;
         glm::vec2 pos;
         glm::vec2 direction;
         float speed = bulletSpeed;
         unsigned short richochets = 0;
         unsigned short maxRichochets = 1;
 
-        Bullet(glm::vec2 pos, glm::vec2 direction);
+        Bullet(BulletID, glm::vec2 pos, glm::vec2 direction);
+
+        static BulletID generateBulletID();
     };
 
     struct State {

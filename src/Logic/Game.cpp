@@ -13,9 +13,15 @@ namespace Game {
         isAlive = true;
     }
 
-    Bullet::Bullet(glm::vec2 pos, glm::vec2 direction) {
+    Bullet::Bullet(BulletID id, glm::vec2 pos, glm::vec2 direction) {
+        this->id = id;
         this->pos = pos;
         this->direction = direction;
+    }
+
+    BulletID Bullet::generateBulletID() {
+        static BulletID id = 0;
+        return id++;
     }
 
     World::World(State initialState) {
@@ -47,8 +53,6 @@ namespace Game {
         for(Event event : events) {
             Tank& tank = state.tanks[event.tankId];
 
-            struct Bullet bulletIfFired(tank.pos + tank.gunDirection * 2.f, tank.gunDirection);
-
             switch(event.type) {
                 case EventType::FORWARD:
                     tank.pos += tank.wheelDirection * tank.speed;
@@ -60,13 +64,19 @@ namespace Game {
                     break;
                 case EventType::SHOOT:
                     if(tank.bullets.size() >= maxBullets) { break; }
-                    tank.bullets.push_back(bulletIfFired);
+                    tank.bullets.push_back(Bullet(Bullet::generateBulletID(), tank.pos + tank.gunDirection * 2.f, tank.gunDirection));
                     break;
                 case EventType::ROTATE_WHEELS_CLOCKWISE:
                     tank.wheelDirection = glm::rotate(tank.wheelDirection, -tankRotationSpeed);
+
+                    // todo: remove this when gun is not tied to wheels
+                    tank.gunDirection = tank.wheelDirection;
                     break;
                 case EventType::ROTATE_WHEELS_CCLOCKWISE:
                     tank.wheelDirection = glm::rotate(tank.wheelDirection, tankRotationSpeed);
+
+                    // todo: remove this when gun is not tied to wheels
+                    tank.gunDirection = tank.wheelDirection;
                     break;
                 case EventType::GUN_DIRECTION:
                     tank.gunDirection = glm::vec2(cos(event.value), sin(event.value));
