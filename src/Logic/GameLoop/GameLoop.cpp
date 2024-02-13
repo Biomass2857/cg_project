@@ -4,6 +4,15 @@ GameLoop::GameLoop() {
     running.store(false);
 }
 
+GameLoop::~GameLoop() {
+    if(thread != nullptr) {
+        running.store(false);
+        thread->join();
+        delete thread;
+        thread = nullptr;
+    }
+}
+
 void GameLoop::start(Game::State initialState) {
     if(thread != nullptr) return;
 

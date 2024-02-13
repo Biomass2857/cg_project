@@ -21,6 +21,7 @@ struct PairHash {
 class GameLoop {
     public:
         GameLoop();
+        ~GameLoop();
 
         void start(Game::State initialState);
         void stop();
