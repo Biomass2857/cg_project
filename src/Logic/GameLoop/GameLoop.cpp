@@ -5,12 +5,7 @@ GameLoop::GameLoop() {
 }
 
 GameLoop::~GameLoop() {
-    if(thread != nullptr) {
-        running.store(false);
-        thread->join();
-        delete thread;
-        thread = nullptr;
-    }
+    stop();
 }
 
 void GameLoop::start(Game::State initialState) {
@@ -53,6 +48,7 @@ void GameLoop::stop() {
     if(thread == nullptr) return;
 
     running.store(false);
+    thread->join();
 
     delete thread;
     thread = nullptr;

@@ -116,6 +116,8 @@ std::vector<struct Game::Tank> GameMap::generateTanks() {
 }
 
 void GameMap::getInput(GLFWwindow* window) {
+    if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) return;
+
 	if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
         Game::Event event;
         event.tankId = 0;
