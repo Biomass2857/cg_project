@@ -85,7 +85,7 @@ namespace Game {
         }
 
         for(Tank& tank : state.tanks) {
-            for(int i = 0; i < tank.bullets.size(); i++) {
+            for(std::size_t i = 0; i < tank.bullets.size(); i++) {
                 Bullet& bullet = tank.bullets[i];
                 bullet.pos += bullet.direction * bullet.speed;
                 bullet.pos = glm::clamp(bullet.pos, glm::vec2(0.0f, 0.0f), mapSize);
@@ -105,10 +105,11 @@ namespace Game {
                     continue;
                 }
 
-                for(Tank& otherTank : state.tanks) {
+                for(std::size_t j = 0; j < state.tanks.size(); j++) {
+                    Tank& otherTank = state.tanks[j];
                     if(intersects(otherTank, bullet)) {
                         tank.bullets.erase(tank.bullets.begin() + i--);
-                        otherTank.isAlive = false;
+                        state.tanks.erase(state.tanks.begin() + j);
                         break;
                     }
                 }

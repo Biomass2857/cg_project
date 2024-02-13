@@ -36,12 +36,12 @@ void GameMap::render(Camera& camera) {
         box.render(camera);
     }
 
-    for(Tank& tank : tanks) {
-        tank.render(camera);
+    for(auto& tankPair : tanks) {
+        tankPair.second.render(camera);
     }
 
-    for(auto& shell : shells) {
-        shell.second.render(camera);
+    for(auto& shellPair : shells) {
+        shellPair.second.render(camera);
     }
 }
 
@@ -96,6 +96,24 @@ void GameMap::preprareShowState(Game::State state) {
             shell.setRotation(rotationAngle, glm::vec3(0.0f, 0.0f, 1.0f));
         }
     }
+
+    for(auto& shell : shells) {
+        bool shellExists = false;
+
+        for(Game::Tank tank : state.tanks) {
+            for(Game::Bullet bullet : tank.bullets) {
+                if(shell.first == bullet.id) {
+                    shellExists = true;
+                    break;
+                }
+            }
+        }
+
+        if(!shellExists) {
+            shell.second.free();
+            shells.erase(shell.first);
+        }
+    }
 }
 
 std::vector<struct Game::Tank> GameMap::generateTanks() {
@@ -109,7 +127,7 @@ std::vector<struct Game::Tank> GameMap::generateTanks() {
         Tank tankObject;
         tankObject.setShader(*colorShader);
         tankObject.scale(0.5f);
-        tanks.push_back(tankObject);
+        tanks.insert(std::make_pair(i, tankObject));
     }
 
     return gameTanks;

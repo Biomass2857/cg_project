@@ -46,7 +46,7 @@ class GameMap {
         ShaderProgram* textureShader;
         TextureAtlas* atlas;
         Object floor;
-        std::vector<Tank> tanks;
+        std::unordered_map<Game::TankID, Tank> tanks;
         std::unordered_map<int, Shell> shells;
         std::vector<Box> boxes;
 
