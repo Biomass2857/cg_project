@@ -172,9 +172,15 @@ void GameMap::getInput(GLFWwindow* window) {
     }
 
     if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-        Game::Event event;
-        event.tankId = 0;
-        event.type = Game::EventType::SHOOT;
-        gameLoop.accumulateEvents({ event });
+        if(!spacePressed) {
+            Game::Event event;
+            event.tankId = 0;
+            event.type = Game::EventType::SHOOT;
+            gameLoop.accumulateEvents({ event });
+
+            spacePressed = true;
+        }
+    } else {
+        spacePressed = false;
     }
 }

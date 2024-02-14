@@ -51,6 +51,7 @@ class GameMap {
         std::vector<Box> boxes;
 
         GameLoop gameLoop;
+        bool spacePressed = false;
 };
 
 #endif
