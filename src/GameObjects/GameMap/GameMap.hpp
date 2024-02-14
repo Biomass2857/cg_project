@@ -37,7 +37,7 @@ class GameMap {
     private:
         void preprareShowState(Game::State state);
         void generateWall();
-        std::vector<struct Game::Tank> generateTanks();
+        std::unordered_map<Game::TankID, Game::Tank> generateTanks();
 
         glm::vec2 size = glm::vec2(20.0f, 10.0f);
         float boxWidth = 1.0f;

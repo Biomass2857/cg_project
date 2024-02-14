@@ -22,7 +22,7 @@ GameMap::GameMap(TextureAtlas &atlas, ShaderProgram& colorShader, ShaderProgram&
 
     generateWall();
 
-    std::vector<Game::Tank> gameTanks = generateTanks();
+    std::unordered_map<Game::TankID, Game::Tank> gameTanks = generateTanks();
     Game::State initialState(Game::State { gameTanks });
     gameLoop.start(initialState);
 }
@@ -69,14 +69,15 @@ void GameMap::generateWall() {
 }
 
 void GameMap::preprareShowState(Game::State state) {
-    for(int i = 0; i < state.tanks.size(); i++) {
-        Game::Tank& stateTank = state.tanks[i];
+    for(auto tankPair : state.tanks) {
+        Game::TankID stateTankId = tankPair.first;
+        Game::Tank& stateTank = tankPair.second;
 
-        glm::vec2 relativePos = state.tanks[i].pos / Game::mapSize;
-        tanks[i].setTranslation(glm::vec3(relativePos * size, 0.0f));
+        glm::vec2 relativePos = stateTank.pos / Game::mapSize;
+        tanks[stateTankId].setTranslation(glm::vec3(relativePos * size, 0.0f));
 
         float rotationAngle = glm::atan(stateTank.wheelDirection.y, stateTank.wheelDirection.x) - 3.0 * glm::pi<float>() / 2.0f;
-        tanks[i].setRotation(rotationAngle, glm::vec3(0.0f, 0.0f, 1.0f));
+        tanks[stateTankId].setRotation(rotationAngle, glm::vec3(0.0f, 0.0f, 1.0f));
 
         for(Game::Bullet bullet : stateTank.bullets) {
             bool shellExists = shells.find(bullet.id) != shells.end();
@@ -97,10 +98,13 @@ void GameMap::preprareShowState(Game::State state) {
         }
     }
 
+    std::vector<int> shellsToRemove;
     for(auto& shell : shells) {
         bool shellExists = false;
 
-        for(Game::Tank tank : state.tanks) {
+        for(auto tankPair : state.tanks) {
+            Game::Tank tank = tankPair.second;
+
             for(Game::Bullet bullet : tank.bullets) {
                 if(shell.first == bullet.id) {
                     shellExists = true;
@@ -110,19 +114,22 @@ void GameMap::preprareShowState(Game::State state) {
         }
 
         if(!shellExists) {
-            shell.second.free();
-            shells.erase(shell.first);
+            shellsToRemove.push_back(shell.first);
         }
+    }
+
+    for(int shellId : shellsToRemove) {
+        shells.erase(shellId);
     }
 }
 
-std::vector<struct Game::Tank> GameMap::generateTanks() {
-    std::vector<struct Game::Tank> gameTanks;
+std::unordered_map<Game::TankID, Game::Tank> GameMap::generateTanks() {
+    std::unordered_map<Game::TankID, Game::Tank> gameTanks;
 
     for(int i = 0; i < 4; i++) {
         glm::vec2 relativePos = glm::vec2(0.25f + 0.5f * (i / 2), 0.25f + 0.5f * (i % 2));
         struct Game::Tank tank(i, Game::mapSize * relativePos);
-        gameTanks.push_back(tank);
+        gameTanks.insert(std::make_pair(i, tank));
 
         Tank tankObject;
         tankObject.setShader(*colorShader);

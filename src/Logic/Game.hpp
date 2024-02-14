@@ -15,6 +15,7 @@ namespace Game {
     struct Bullet;
 
     const float gameFrequency = 300.0f;
+    const glm::vec2 tankSize = glm::vec2(10.0f, 10.0f);
     const float tankSpeed = 200.0f / gameFrequency / 4.f;
     const float bulletSpeed = 2.5f * tankSpeed;
     const float tankRotationSpeed = 2.0f * glm::pi<float>() / gameFrequency / 1.5f;
@@ -33,7 +34,7 @@ namespace Game {
 
         std::vector<Bullet> bullets;
 
-        Tank(int id, glm::vec2 pos);
+        Tank(TankID id, glm::vec2 pos);
     };
 
     struct Bullet {
@@ -50,7 +51,7 @@ namespace Game {
     };
 
     struct State {
-        std::vector<struct Tank> tanks;
+        std::unordered_map<TankID, struct Tank> tanks;
     };
 
     enum class EventType {

@@ -1,11 +1,11 @@
 #include "Game.hpp"
 
 namespace Game {
-    Tank::Tank(int id, glm::vec2 pos) {
+    Tank::Tank(TankID id, glm::vec2 pos) {
         this->id = id;
         this->pos = pos;
         
-        size = glm::vec2(1.0f, 1.0f);
+        size = tankSize;
         gunDirection = glm::vec2(0.0f, -1.0f);
         wheelDirection = glm::vec2(0.0f, -1.0f);
         speed = tankSpeed;
@@ -51,7 +51,11 @@ namespace Game {
 
     State World::getNextState(State state, std::vector<Event> events) const {
         for(Event event : events) {
-            Tank& tank = state.tanks[event.tankId];
+            auto stateTankIterator = state.tanks.find(event.tankId);
+
+            if(stateTankIterator == state.tanks.end()) { continue; }
+
+            Tank& tank = stateTankIterator->second;
 
             switch(event.type) {
                 case EventType::FORWARD:
@@ -84,7 +88,10 @@ namespace Game {
             }
         }
 
-        for(Tank& tank : state.tanks) {
+        std::vector<TankID> deadTanks;
+        for(auto& tankPair : state.tanks) {
+            Tank& tank = tankPair.second;
+
             for(std::size_t i = 0; i < tank.bullets.size(); i++) {
                 Bullet& bullet = tank.bullets[i];
                 bullet.pos += bullet.direction * bullet.speed;
@@ -105,11 +112,13 @@ namespace Game {
                     continue;
                 }
 
-                for(std::size_t j = 0; j < state.tanks.size(); j++) {
-                    Tank& otherTank = state.tanks[j];
+                for(auto& otherTankPair : state.tanks) {
+                    TankID otherTankId = otherTankPair.first;
+                    Tank& otherTank = otherTankPair.second;
+
                     if(intersects(otherTank, bullet)) {
                         tank.bullets.erase(tank.bullets.begin() + i--);
-                        state.tanks.erase(state.tanks.begin() + j);
+                        deadTanks.push_back(otherTankId);
                         break;
                     }
                 }
