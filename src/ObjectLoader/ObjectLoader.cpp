@@ -1,7 +1,7 @@
-#include "ObjLoader.hpp"
+#include "ObjectLoader.hpp"
 #define OBJ_LOADER_VERBOSE true
 
-ObjLoader::ObjLoader(const std::string path) {
+ObjectLoader::ObjectLoader(const std::string path) {
     this->path = path;
 
     std::ifstream file(path);
@@ -15,7 +15,7 @@ ObjLoader::ObjLoader(const std::string path) {
         if(line.substr(0, 2) == "f ") {
             std::vector<std::string> face_vertices = Util::split(line.substr(2), ' ');
 
-            struct ObjFace face = parseFace(face_vertices);
+            struct ObjectFace face = parseFace(face_vertices);
             faces.push_back(face);
         } else if(line.substr(0, 2) == "v ") {
             std::istringstream s(line.substr(2));
@@ -48,18 +48,18 @@ ObjLoader::ObjLoader(const std::string path) {
             materials.insert(materials.end(), lib_materials.begin(), lib_materials.end());
         } else {
             #ifdef OBJ_LOADER_VERBOSE
-            std::cout <<"[ObjLoader] Ignoring line: "<< line << std::endl;
+            std::cout <<"[ObjectLoader] Ignoring line: "<< line << std::endl;
             #endif
         }
     }
 }
 
-struct ObjFace ObjLoader::parseFace(const std::vector<std::string>& face_vertices) {
-    struct ObjFace face;
+struct ObjectFace ObjectLoader::parseFace(const std::vector<std::string>& face_vertices) {
+    struct ObjectFace face;
     for(std::string vertexString : face_vertices) {
         std::vector<std::string> vertex_data = Util::split(vertexString, '/');
 
-        struct ObjVertex obj_vertex;
+        struct ObjectVertex obj_vertex;
         try {
             obj_vertex.vertexIndex = translateObjectFileIndexToVectorIndex(std::stoi(vertex_data[0]));
         } catch(std::exception e) {
@@ -90,11 +90,11 @@ struct ObjFace ObjLoader::parseFace(const std::vector<std::string>& face_vertice
     return face;
 }
 
-unsigned int ObjLoader::translateObjectFileIndexToVectorIndex(unsigned int index) {
+unsigned int ObjectLoader::translateObjectFileIndexToVectorIndex(unsigned int index) {
     return index - 1;
 }
 
-std::vector<struct ObjMaterial> ObjLoader::readMaterials(const std::string path) {
+std::vector<struct ObjMaterial> ObjectLoader::readMaterials(const std::string path) {
     std::vector<struct ObjMaterial> materials;
     std::ifstream file(path);
 
@@ -150,7 +150,7 @@ std::vector<struct ObjMaterial> ObjLoader::readMaterials(const std::string path)
             materials.back().Ks = Ks;
         } else {
             #ifdef OBJ_LOADER_VERBOSE
-            std::cout <<"[ObjLoader] Ignoring line: "<< line << std::endl;
+            std::cout <<"[ObjectLoader] Ignoring line: "<< line << std::endl;
             #endif
         }
     }

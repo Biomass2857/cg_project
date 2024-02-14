@@ -1,5 +1,5 @@
-#ifndef OBJLOADER_HPP
-#define OBJLOADER_HPP
+#ifndef OBJECTLOADER_HPP
+#define OBJECTLOADER_HPP
 #include <iostream>
 #include <string>
 #include <vector>
@@ -22,32 +22,34 @@ struct ObjMaterial {
     // TODO: Map_Kd
 };
 
-struct ObjFace {
+struct ObjectFace {
     std::string materialIdentifier;
-    std::vector<struct ObjVertex> vertices;
+    std::vector<struct ObjectVertex> vertices;
 };
 
-struct ObjVertex {
+struct ObjectVertex {
     unsigned short vertexIndex;
     unsigned short uvIndex;
     unsigned short normalIndex;
 };
 
-class ObjLoader {
+class ObjectLoader {
     public:
-        ObjLoader(const std::string path);
+        ObjectLoader(const std::string path);
+
+        std::vector<glm::vec2> uvs;
+        std::vector<glm::vec3> normals;
+        std::vector<glm::vec3> vertices;
+
+        std::vector<struct ObjectFace> faces;
 
         friend class Object;
     private:
         unsigned int translateObjectFileIndexToVectorIndex(unsigned int index);
         std::vector<struct ObjMaterial> readMaterials(const std::string path);
-        struct ObjFace parseFace(const std::vector<std::string>& face_vertices);
+        struct ObjectFace parseFace(const std::vector<std::string>& face_vertices);
 
-        std::vector<glm::vec2> uvs;
-        std::vector<glm::vec3> normals;
-        std::vector<glm::vec3> vertices;
         std::vector<struct ObjMaterial> materials;
-        std::vector<struct ObjFace> faces;
 
         std::string path;
 };

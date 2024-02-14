@@ -16,12 +16,11 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "../Util/Util.hpp"
-#include "../ObjLoader/ObjLoader.hpp"
 #include "../ShaderProgram/ShaderProgram.hpp"
 #include "../Texture/Texture.hpp"
 #include "../Camera/Camera.hpp"
-
-enum class VertexFeature { Position = 0, Normal = 1, Color = 2, UV = 3 };
+#include "../VertexFeature/VertexFeature.hpp"
+#include "../ObjectTemplate/ObjectTemplate.hpp"
 
 class Object {
     public:
@@ -31,11 +30,7 @@ class Object {
             const std::vector<VertexFeature> features = { VertexFeature::Position }
         );
 
-        Object(
-            const std::string& objFilePath,
-            const std::vector<VertexFeature> features = { VertexFeature::Position, VertexFeature::Normal, VertexFeature::UV },
-            float scaleOnLoad = 1.0f
-        );
+        Object(const ObjectTemplate& objectTemplate);
 
         void setTexture(const Texture& texture);
         void setShader(const ShaderProgram& shader);

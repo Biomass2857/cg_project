@@ -1,9 +1,11 @@
-GL_DEPTH_TEST
+GL_DEPTH_TEST (DepthBuffer) vergessen/zu aktivieren
 GL API verstehen und richtig anwenden (glAttribPointer)
 normal vectors richtig definieren für fr shader
 obj/3d modelle files
 CMake
 C++
+
+frame/time based rendering
 
 BufferData braucht die size in bytes und nicht die anzahl an elementen :))
 
@@ -14,3 +16,5 @@ reihenfolge der befehle :)))):
     - glBindTexture
 
 transformationsmatrizen richtig anwenden auf objekte
+
+OpenAL
