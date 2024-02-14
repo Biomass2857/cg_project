@@ -36,10 +36,6 @@ class TextureAtlas {
 
         void free();
     private:
-        const uint8_t* textureAtlasBytes;
-
-        int channels;
-        int width, height;
         std::unordered_map<std::string, Texture> textures;
 };
 

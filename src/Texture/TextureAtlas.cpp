@@ -5,7 +5,8 @@ TextureAtlas::TextureAtlas(
     const std::vector<TextureConfiguration>& configuration
 ) {
     stbi_set_flip_vertically_on_load(true);
-    textureAtlasBytes = stbi_load(path.c_str(), &width, &height, &channels, 0);
+    int width = 0, height = 0, channels = 0;
+    const uint8_t* textureAtlasBytes = stbi_load(path.c_str(), &width, &height, &channels, 0);
 
     for(const TextureConfiguration& config : configuration) {
         uint8_t* data = new uint8_t[config.width * config.height * channels];
@@ -21,6 +22,8 @@ TextureAtlas::TextureAtlas(
         Texture texture = Texture(data, config.width, config.height, channels);
         textures.insert(std::pair<std::string, Texture>(config.name, texture));
     }
+
+    stbi_image_free((void*) textureAtlasBytes);
 }
 
 Texture TextureAtlas::getTexture(const std::string& name) const {
@@ -31,6 +34,4 @@ void TextureAtlas::free() {
     for(auto& pair : textures) {
         pair.second.free();
     }
-
-    stbi_image_free((void*) textureAtlasBytes);
 }

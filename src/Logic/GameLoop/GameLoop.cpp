@@ -23,10 +23,11 @@ void GameLoop::start(Game::State initialState) {
             std::unique_lock<std::mutex> lock(mutex);
 
             std::vector<Game::Event> mergedEvents = this->getEvents();
-            std::cout <<"[GameLoop] Merged events: " << mergedEvents.size() << std::endl;
             world.tick(mergedEvents);
             snapshot = world.getState();
             this->clearEvents();
+
+            std::cout <<"game thread running"<< std::endl;
 
             lock.unlock();
 
@@ -34,10 +35,10 @@ void GameLoop::start(Game::State initialState) {
             float timeTaken = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastTime).count();
             lastTime = now;
 
-            std::cout <<"[GameLoop] Time taken: " << timeTaken << "ms"<< std::endl;
-
-            if(timeTaken < tickTimeMs) {
-                std::chrono::milliseconds sleepTime((long long) std::max(0.f, tickTimeMs - timeTaken));
+            if(timeTaken > tickTimeMs) {
+                std::cout <<"[GameLoop] Overload! gameloop tick time taken: " << timeTaken << "ms"<< std::endl;
+            } else {
+                std::chrono::milliseconds sleepTime((long long) (tickTimeMs - timeTaken));
                 std::this_thread::sleep_for(sleepTime);
             }
         }
@@ -68,12 +69,18 @@ void GameLoop::clearEvents() {
 }
 
 void GameLoop::accumulateEvents(std::vector<Game::Event> events) {
+    std::unique_lock<std::mutex> lock(mutex);
+
     for(auto event : events) {
         auto key = std::make_pair(event.type, event.tankId);
         eventBuffer.insert(std::make_pair(key, event));
     }
+
+    lock.unlock();
 }
 
 Game::State GameLoop::getGameSnapshot() {
+    std::lock_guard<std::mutex> lock(mutex);
+    
     return snapshot;
 }

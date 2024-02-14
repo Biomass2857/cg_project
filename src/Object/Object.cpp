@@ -150,9 +150,6 @@ void Object::render(Camera& camera) {
     if(textureEnabled) {
         texture->bind();
         shader->setTexture("tex0", *texture);
-        std::cout <<"binding texture"<< std::endl;
-    } else {
-        std::cout <<"not binding texture"<< std::endl;
     }
 
     shader->use();
