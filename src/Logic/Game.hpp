@@ -2,6 +2,7 @@
 #define GAME_HPP
 
 #include <vector>
+#include <unordered_map>
 
 #define GLM_ENABLE_EXPERIMENTAL 1
 #include <glm/glm.hpp>
