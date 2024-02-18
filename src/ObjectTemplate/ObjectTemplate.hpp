@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <algorithm>
 #include "../VertexFeature/VertexFeature.hpp"
 #include "../ObjectLoader/ObjectLoader.hpp"
 
