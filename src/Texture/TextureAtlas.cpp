@@ -8,6 +8,10 @@ TextureAtlas::TextureAtlas(
     int width = 0, height = 0, channels = 0;
     const uint8_t* textureAtlasBytes = stbi_load(path.c_str(), &width, &height, &channels, 0);
 
+    if(width <= 0 || height <= 0 || channels <= 0) {
+        std::cerr <<"Failed to load texture atlas: " << path << std::endl;
+    }
+
     for(const TextureConfiguration& config : configuration) {
         uint8_t* data = new uint8_t[config.width * config.height * channels];
         for(int y = 0; y < config.height; y++) {
