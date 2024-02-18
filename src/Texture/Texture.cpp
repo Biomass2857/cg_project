@@ -18,7 +18,7 @@ Texture::Texture(const uint8_t* data, unsigned int width, unsigned int height, u
 
 void Texture::init() {
     glGenTextures(1, &ID);
-    glActiveTexture(GL_TEXTURE0 /*+ slot*/);
+    glActiveTexture(GL_TEXTURE0 + slot);
     glBindTexture(GL_TEXTURE_2D, ID);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -34,6 +34,7 @@ void Texture::init() {
 }
 
 void Texture::bind() const {
+    glActiveTexture(GL_TEXTURE0 + slot);
     glBindTexture(GL_TEXTURE_2D, ID);
 }
 

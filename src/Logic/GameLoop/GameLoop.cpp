@@ -27,8 +27,6 @@ void GameLoop::start(Game::State initialState) {
             snapshot = world.getState();
             this->clearEvents();
 
-            std::cout <<"game thread running"<< std::endl;
-
             lock.unlock();
 
             auto now = std::chrono::steady_clock::now();

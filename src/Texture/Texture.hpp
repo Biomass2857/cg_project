@@ -23,8 +23,8 @@ class Texture {
 
         friend class ShaderProgram;
     private:
+        const uint8_t* data;
         void init();
-        const uint8_t *data;
 
         unsigned short channels;
         unsigned int width, height;

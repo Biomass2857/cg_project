@@ -103,12 +103,12 @@ void Object::render(Camera& camera) {
     glBindVertexArray(VAO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 
+    shader->use();
+    
     if(textureEnabled) {
         texture->bind();
         shader->setTexture("tex0", *texture);
     }
-
-    shader->use();
 
     shader->setMatrix4("camMatrix", camera.getMatrix());
     shader->setMatrix4("modelview", translation * rotation * scaling);
