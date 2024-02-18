@@ -18,7 +18,7 @@ GameMap::GameMap(TextureAtlas &atlas, ShaderProgram& colorShader, ShaderProgram&
     Texture environmentTexture = this->atlas->getTexture("floor_dark");
     floor.setTexture(environmentTexture);
 
-    floor.setShader(colorShader);
+    floor.setShader(textureShader);
 
     generateWall();
 
