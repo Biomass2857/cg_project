@@ -18,7 +18,9 @@ pub struct Shader {
 
 impl Shader {
     pub fn new(path: &str, shader_type: ShaderType) -> Shader {
-        let mut file = File::open(format!("{}{}", path, Self::get_extension(&shader_type))).expect("Unable to open the file");
+        let path = format!("{}{}", path, Self::get_extension(&shader_type));
+        // println!("Loading shader from: {}", path);
+        let mut file = File::open(path).expect("Unable to open the file");
         let mut source = String::new();
         file.read_to_string(&mut source).expect("Unable to read the file");
 

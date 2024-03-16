@@ -1,10 +1,9 @@
 extern crate glutin;
 extern crate nalgebra as na;
 
-use na::Matrix4;
+// use na::Matrix4;
 
 use crate::shader::Shader;
-use std::ffi::CString;
 use std::ptr;
 use gl::types::*;
 use std::str;
@@ -42,21 +41,21 @@ impl ShaderProgram {
         }
     }
 
-    pub fn set_float(&self, name: &str, value: f32) {
-        let name_c_string = CString::new(name).unwrap();
-        unsafe {
-            let location = gl::GetUniformLocation(self.id, name_c_string.as_ptr());
-            gl::Uniform1f(location, value);
-        }
-    }
+    // pub fn set_float(&self, name: &str, value: f32) {
+    //     let name_c_string = CString::new(name).unwrap();
+    //     unsafe {
+    //         let location = gl::GetUniformLocation(self.id, name_c_string.as_ptr());
+    //         gl::Uniform1f(location, value);
+    //     }
+    // }
 
-    pub fn set_matrix4(&self, name: &str, matrix: &Matrix4<f32>) {
-        let name_c_string = CString::new(name).unwrap();
-        unsafe {
-            let location = gl::GetUniformLocation(self.id, name_c_string.as_ptr());
-            gl::UniformMatrix4fv(location, 1, gl::FALSE, matrix.as_ptr());
-        }
-    }
+    // pub fn set_matrix4(&self, name: &str, matrix: &Matrix4<f32>) {
+    //     let name_c_string = CString::new(name).unwrap();
+    //     unsafe {
+    //         let location = gl::GetUniformLocation(self.id, name_c_string.as_ptr());
+    //         gl::UniformMatrix4fv(location, 1, gl::FALSE, matrix.as_ptr());
+    //     }
+    // }
 
     // pub fn set_texture(&self, name: &str, texture: &Texture) {
     //     let name_c_string = CString::new(name).unwrap();
