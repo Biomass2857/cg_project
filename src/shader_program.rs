@@ -1,13 +1,17 @@
 extern crate glutin;
-extern crate nalgebra as na;
+extern crate nalgebra_glm as glm;
 
-// use na::Matrix4;
-
-use crate::shader::Shader;
 use std::ptr;
 use gl::types::*;
+use std::ffi::CString;
 use std::str;
 
+use glm::Mat4;
+
+use crate::texture::Texture;
+use crate::shader::Shader;
+
+#[derive(Clone, Copy)]
 pub struct ShaderProgram {
     id: u32,
 }
@@ -41,33 +45,31 @@ impl ShaderProgram {
         }
     }
 
-    // pub fn set_float(&self, name: &str, value: f32) {
-    //     let name_c_string = CString::new(name).unwrap();
-    //     unsafe {
-    //         let location = gl::GetUniformLocation(self.id, name_c_string.as_ptr());
-    //         gl::Uniform1f(location, value);
-    //     }
-    // }
+    pub fn set_float(&self, name: &str, value: f32) {
+        let name_c_string = CString::new(name).unwrap();
+        unsafe {
+            let location = gl::GetUniformLocation(self.id, name_c_string.as_ptr());
+            gl::Uniform1f(location, value);
+        }
+    }
 
-    // pub fn set_matrix4(&self, name: &str, matrix: &Matrix4<f32>) {
-    //     let name_c_string = CString::new(name).unwrap();
-    //     unsafe {
-    //         let location = gl::GetUniformLocation(self.id, name_c_string.as_ptr());
-    //         gl::UniformMatrix4fv(location, 1, gl::FALSE, matrix.as_ptr());
-    //     }
-    // }
+    pub fn set_matrix4(&self, name: &str, matrix: &Mat4) {
+        let name_c_string = CString::new(name).unwrap();
+        unsafe {
+            let location = gl::GetUniformLocation(self.id, name_c_string.as_ptr());
+            gl::UniformMatrix4fv(location, 1, gl::FALSE, matrix.as_ptr());
+        }
+    }
 
-    // pub fn set_texture(&self, name: &str, texture: &Texture) {
-    //     let name_c_string = CString::new(name).unwrap();
-    //     unsafe {
-    //         let location = gl::GetUniformLocation(self.id, name_c_string.as_ptr());
-    //         gl::Uniform1i(location, texture.slot() + 1);
-    //     }
-    // }
-}
+    pub fn set_texture(&self, name: &str, texture: &Texture) {
+        let name_c_string = CString::new(name).unwrap();
+        unsafe {
+            let location = gl::GetUniformLocation(self.id, name_c_string.as_ptr());
+            gl::Uniform1i(location, (texture.slot + 1) as GLint);
+        }
+    }
 
-impl Drop for ShaderProgram {
-    fn drop(&mut self) {
+    pub fn free(&self) {
         unsafe {
             gl::DeleteProgram(self.id);
         }

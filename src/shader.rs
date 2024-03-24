@@ -12,6 +12,7 @@ pub enum ShaderType {
     Fragment,
 }
 
+#[derive(Clone, Copy)]
 pub struct Shader {
     id: u32,
 }
@@ -34,10 +35,12 @@ impl Shader {
             let mut info_log = Vec::with_capacity(512);
             info_log.set_len(512 - 1); // subtract 1 to skip the trailing null character
             gl::GetShaderiv(id, gl::COMPILE_STATUS, &mut success);
+
             if success != gl::TRUE as GLint {
                 gl::GetShaderInfoLog(id, 512, ptr::null_mut(), info_log.as_mut_ptr() as *mut GLchar);
                 println!("ERROR::SHADER::COMPILATION_FAILED\n{}", str::from_utf8(&info_log).unwrap());
             }
+            
             id
         };
 
@@ -61,10 +64,8 @@ impl Shader {
     pub fn id(&self) -> u32 {
         self.id
     }
-}
 
-impl Drop for Shader {
-    fn drop(&mut self) {
+    pub fn free(&self) {
         unsafe {
             gl::DeleteShader(self.id);
         }

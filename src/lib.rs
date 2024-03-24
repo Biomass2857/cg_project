@@ -1,2 +1,13 @@
 mod shader;
 mod shader_program;
+mod texture;
+mod texture_atlas;
+mod object;
+mod vertex_feature;
+mod object_template;
+mod camera;
+mod object_loader;
+mod render;
+mod game;
+mod gameloop;
+mod game_objects;

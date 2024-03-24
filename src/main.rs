@@ -1,111 +1,124 @@
 extern crate glutin;
+extern crate nalgebra_glm as glm;
+
+use std::time::Instant;
+use glutin::event::{Event, WindowEvent};
+use glutin::event_loop::{ControlFlow, EventLoop};
+use glutin::window::WindowBuilder;
+use glutin::ContextBuilder;
+use glutin::dpi::LogicalSize;
 
 mod shader;
 mod shader_program;
+mod texture;
+mod texture_atlas;
+mod object;
+mod vertex_feature;
+mod object_template;
+mod camera;
+mod render;
+mod object_loader;
+mod game_objects;
+mod game;
+mod gameloop;
 
-use glutin::event::{Event, WindowEvent};
-use glutin::event_loop::{ControlFlow, EventLoop};
-use crate::shader::{Shader, ShaderType};
+use crate::texture_atlas::TextureAtlas;
+use crate::texture_atlas::TextureConfiguration;
+use crate::shader::Shader;
+use crate::shader::ShaderType;
 use crate::shader_program::ShaderProgram;
-use glutin::window::WindowBuilder;
-use glutin::ContextBuilder;
-use gl::types::*;
-use std::ptr;
+use crate::camera::Camera;
 
-fn create_vbo(vertices: &[f32]) -> GLuint {
-    unsafe {
-        let mut vbo: GLuint = 0;
-        gl::GenBuffers(1, &mut vbo);
-        gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
-        gl::BufferData(
-            gl::ARRAY_BUFFER,
-            (vertices.len() * std::mem::size_of::<GLfloat>()) as GLsizeiptr,
-            vertices.as_ptr() as *const GLvoid,
-            gl::STATIC_DRAW,
-        );
+use crate::game_objects::gamemap::GameMap;
 
-        vbo
-    }
-}
+const WINDOW_WIDTH: i32 = 600;
+const WINDOW_HEIGHT: i32 = 600;
 
-fn create_vao(vbo: GLuint) -> GLuint {
-    unsafe {
-        let mut vao: GLuint = 0;
-        gl::GenVertexArrays(1, &mut vao);
-        gl::BindVertexArray(vao);
+fn main() -> Result<(), std::io::Error> {
+    let el = EventLoop::new();
+    let wb = WindowBuilder::new()
+        .with_title("Wii Tanks!")
+        .with_inner_size(LogicalSize::new(WINDOW_WIDTH, WINDOW_HEIGHT));
+    
+    let windowed_context = ContextBuilder::new().build_windowed(wb, &el).unwrap();
+    let windowed_context = unsafe { windowed_context.make_current().unwrap() };
 
-        gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
+    gl::load_with(|symbol| windowed_context.get_proc_address(symbol) as *const _);
 
-        gl::EnableVertexAttribArray(0);
-        gl::VertexAttribPointer(
-            0,
-            3,
-            gl::FLOAT,
-            gl::FALSE as GLboolean,
-            6 * std::mem::size_of::<GLfloat>() as GLsizei,
-            ptr::null(),
-        );
+    let mut u_time = 0.0;
+    let start = Instant::now();
 
-        let pointer = (3 * std::mem::size_of::<GLfloat>()) as *const GLvoid;
-        gl::EnableVertexAttribArray(1);
-        gl::VertexAttribPointer(
-            1,
-            3,
-            gl::FLOAT,
-            gl::FALSE as GLboolean,
-            6 * std::mem::size_of::<GLfloat>() as GLsizei,
-            pointer,
-        );
-
-        vao
-    }
-}
-
-fn main() {
-    let event_loop = EventLoop::new();
-    let window_builder = WindowBuilder::new()
-        .with_title("Triangle Window")
-        .with_inner_size(glutin::dpi::LogicalSize::new(1024.0, 768.0));
-    let context = ContextBuilder::new().build_windowed(window_builder, &event_loop).unwrap();
-
-    let context = unsafe { context.make_current().unwrap() };
-
-    gl::load_with(|symbol| context.get_proc_address(symbol) as *const _);
-
-    let default_vertex_shader = Shader::new("../../shader/color/color", ShaderType::Vertex);
-    let default_fragment_shader = Shader::new("../../shader/color/color", ShaderType::Fragment);
-    let default_shader_program = ShaderProgram::new(vec![default_vertex_shader, default_fragment_shader]);
-
-    default_shader_program.use_program();
-
-    let vertices: Vec<f32> = vec![
-        -0.5, -0.5, 0.0, 1.0, 1.0, 1.0,
-         0.5, -0.5, 0.0, 1.0, 1.0, 1.0,
-         0.0, 0.5, 0.0, 1.0, 1.0, 1.0,
+    let texture_configurations = vec![
+        TextureConfiguration::new("floor_dark".to_string(), 5, 276, 1024, 512),
+        TextureConfiguration::new("floor_light".to_string(), 5, 276 + 1024 + 5, 1024, 512),
+        TextureConfiguration::new("box_texture_light".to_string(), 902, 207, 64, 64)
     ];
 
-    let vbo = create_vbo(&vertices);
-    let vao = create_vao(vbo);
+    let texture_atlas = TextureAtlas::new("../../assets/wii/tanks_environment_texture_atlas.png".to_string(), texture_configurations)?;
+    let default_vertex_shader = Shader::new("../../shader/default/default", ShaderType::Vertex);
+    let default_fragment_shader = Shader::new("../../shader/default/default", ShaderType::Fragment);
+    let default_shader_program = ShaderProgram::new(vec![default_vertex_shader, default_fragment_shader]);
+    default_shader_program.use_program();
 
-    event_loop.run(move |event, _, control_flow| {
+    let texture_vertex_shader = Shader::new("../../shader/texture/texture", ShaderType::Vertex);
+    let texture_fragment_shader = Shader::new("../../shader/texture/texture", ShaderType::Fragment);
+    let texture_shader_program = ShaderProgram::new(vec![texture_vertex_shader, texture_fragment_shader]);
+    
+    let mut game_map = GameMap::new(texture_atlas, default_shader_program, texture_shader_program);
+    let mut camera = Camera::new(WINDOW_WIDTH, WINDOW_HEIGHT, glm::Vec3::new(0.0, 0.0, 2.0), 45.0, 0.1, 100.0);
+
+    let mut left_mouse_key_pressed = false;
+    let mut delta_time = 0.0;
+
+    el.run(move |event, _, control_flow| {
         *control_flow = ControlFlow::Wait;
 
         match event {
             Event::WindowEvent { event, .. } => match event {
                 WindowEvent::CloseRequested => *control_flow = ControlFlow::Exit,
+                WindowEvent::MouseInput { state, button, .. } => match button {
+                    glutin::event::MouseButton::Left => {
+                        if state == glutin::event::ElementState::Pressed {
+                            left_mouse_key_pressed = true;
+                        } else {
+                            left_mouse_key_pressed = false;
+                        }
+                    },
+                    _ => (),
+                },
+                WindowEvent::KeyboardInput { .. } => {
+                    if left_mouse_key_pressed {
+                        let _ = windowed_context.window().set_cursor_grab(true);
+                        windowed_context.window().set_cursor_visible(false);
+
+                        camera.get_key_input(windowed_context.window(), &event, delta_time);
+                    } else {
+                        let _ = windowed_context.window().set_cursor_grab(false);
+                        windowed_context.window().set_cursor_visible(true);
+
+                        game_map.get_input(&event);
+                    }
+                },
                 _ => (),
+            },
+            Event::MainEventsCleared => {
+                windowed_context.window().request_redraw();
             },
             Event::RedrawRequested(_) => {
                 unsafe {
                     gl::ClearColor(0.2, 0.0, 0.3, 1.0);
                     gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
-
-                    gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
-                    gl::BindVertexArray(vao);
-                    gl::DrawArrays(gl::TRIANGLES, 0, 3);
                 }
 
-                context.swap_buffers().unwrap();
+                let new_time = start.elapsed().as_secs_f32();
+                delta_time = new_time - u_time;
+                u_time = new_time;
+
+                default_shader_program.set_float("u_time", u_time);
+                texture_shader_program.set_float("u_time", u_time);
+                game_map.render(&camera);
+
+                windowed_context.swap_buffers().unwrap();
             },
             _ => (),
         }
