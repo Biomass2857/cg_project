@@ -1,9 +1,0 @@
-dringend:
-- deletion of unused entities (Tom)
-- licht und schatten wieder einbauen
-- texturen wieder zum laufen bringen
-
-optional:
-- tank ai
-- obstacles
-- sounds (Seb)
