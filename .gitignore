@@ -1,8 +1,9 @@
 build/*
 .vscode
 .DS_Store
-
-
-# Added by cargo
-
-target/
+/target
+CMakeCache.txt
+CMakeFiles/
+Makefile
+OpenGLProject
+cmake_install.cmake
