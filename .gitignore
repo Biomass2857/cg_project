@@ -1,3 +1,9 @@
 build/*
 .vscode
 .DS_Store
+/target
+CMakeCache.txt
+CMakeFiles/
+Makefile
+OpenGLProject
+cmake_install.cmake
