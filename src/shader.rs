@@ -1,11 +1,11 @@
 extern crate glutin;
 
+use gl::types::*;
+use std::ffi::CString;
 use std::fs::File;
 use std::io::prelude::*;
-use std::ffi::CString;
-use std::str;
 use std::ptr;
-use gl::types::*;
+use std::str;
 
 pub enum ShaderType {
     Vertex,
@@ -23,7 +23,8 @@ impl Shader {
         // println!("Loading shader from: {}", path);
         let mut file = File::open(path).expect("Unable to open the file");
         let mut source = String::new();
-        file.read_to_string(&mut source).expect("Unable to read the file");
+        file.read_to_string(&mut source)
+            .expect("Unable to read the file");
 
         let id = unsafe {
             let id = gl::CreateShader(Self::get_gl_shader_type(&shader_type));
@@ -37,10 +38,18 @@ impl Shader {
             gl::GetShaderiv(id, gl::COMPILE_STATUS, &mut success);
 
             if success != gl::TRUE as GLint {
-                gl::GetShaderInfoLog(id, 512, ptr::null_mut(), info_log.as_mut_ptr() as *mut GLchar);
-                println!("ERROR::SHADER::COMPILATION_FAILED\n{}", str::from_utf8(&info_log).unwrap());
+                gl::GetShaderInfoLog(
+                    id,
+                    512,
+                    ptr::null_mut(),
+                    info_log.as_mut_ptr() as *mut GLchar,
+                );
+                println!(
+                    "ERROR::SHADER::COMPILATION_FAILED\n{}",
+                    str::from_utf8(&info_log).unwrap()
+                );
             }
-            
+
             id
         };
 

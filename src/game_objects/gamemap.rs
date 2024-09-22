@@ -8,15 +8,15 @@ use std::collections::HashMap;
 use crate::camera::Camera;
 use crate::game;
 use crate::gameloop::GameLoop;
+use crate::object::Object;
 use crate::render::Render;
 use crate::shader_program::ShaderProgram;
 use crate::texture_atlas::TextureAtlas;
-use crate::object::Object;
 use crate::vertex_feature::VertexFeature;
 
 use super::cube::Cube;
-use super::tank::Tank;
 use super::shell::Shell;
+use super::tank::Tank;
 
 pub const CUBE_WIDTH: f32 = 1.0;
 
@@ -35,23 +35,22 @@ pub struct GameMap {
 }
 
 impl GameMap {
-    pub fn new(atlas: TextureAtlas, color_shader: ShaderProgram, texture_shader: ShaderProgram) -> Self {
+    pub fn new(
+        atlas: TextureAtlas,
+        color_shader: ShaderProgram,
+        texture_shader: ShaderProgram,
+    ) -> Self {
         let mut floor = Object::new(
             vec![
-                0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0,
-                0.0, 10.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0,
-                20.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0,
-                20.0, 10.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0
+                0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 10.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0,
+                20.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 20.0, 10.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0,
             ],
+            vec![0, 1, 2, 1, 2, 3],
             vec![
-                0, 1, 2,
-                1, 2, 3
+                VertexFeature::Position,
+                VertexFeature::Normal,
+                VertexFeature::UV,
             ],
-            vec![
-                VertexFeature::Position, 
-                VertexFeature::Normal, 
-                VertexFeature::UV
-            ]
         );
 
         let environment_texture = atlas.get_texture("floor_dark").unwrap();
@@ -86,27 +85,27 @@ impl GameMap {
                 event_type: game::EventType::Forward,
                 value: 0.0,
             };
-        
+
             if input.virtual_keycode == Some(glutin::event::VirtualKeyCode::W) {
                 event.event_type = game::EventType::Forward;
                 self.game_loop.accumulate_events(vec![event.clone()]);
             }
-        
+
             if input.virtual_keycode == Some(glutin::event::VirtualKeyCode::S) {
                 event.event_type = game::EventType::Backward;
                 self.game_loop.accumulate_events(vec![event.clone()]);
             }
-        
+
             if input.virtual_keycode == Some(glutin::event::VirtualKeyCode::A) {
                 event.event_type = game::EventType::RotateWheelsCClockwise;
                 self.game_loop.accumulate_events(vec![event.clone()]);
             }
-        
+
             if input.virtual_keycode == Some(glutin::event::VirtualKeyCode::D) {
                 event.event_type = game::EventType::RotateWheelsClockwise;
                 self.game_loop.accumulate_events(vec![event.clone()]);
             }
-        
+
             if input.virtual_keycode == Some(glutin::event::VirtualKeyCode::Space) {
                 if !self.space_pressed {
                     event.event_type = game::EventType::Shoot;
@@ -116,7 +115,7 @@ impl GameMap {
             } else {
                 self.space_pressed = false;
             }
-        }        
+        }
     }
 
     pub fn render(&mut self, camera: &Camera) {
@@ -155,7 +154,11 @@ impl GameMap {
                 let pos_in_map = Self::mul_comp_wise(relative_pos, self.size);
                 tank.set_translation(glm::Vec3::new(pos_in_map.x, pos_in_map.y, 0.0));
 
-                let rotation_angle = state_tank.wheel_direction.y.atan2(state_tank.wheel_direction.x) - 3.0 * glm::pi::<f32>() / 2.0;
+                let rotation_angle = state_tank
+                    .wheel_direction
+                    .y
+                    .atan2(state_tank.wheel_direction.x)
+                    - 3.0 * glm::pi::<f32>() / 2.0;
                 tank.set_rotation(rotation_angle, glm::vec3(0.0, 0.0, 1.0));
             } else {
                 panic!("Tank with id {} not found", state_tank_id);
@@ -176,7 +179,8 @@ impl GameMap {
                 let pos_in_map = Self::mul_comp_wise(relative_pos, self.size);
                 shell.set_translation(glm::vec3(pos_in_map.x, pos_in_map.y, 0.0));
 
-                let rotation_angle = bullet.direction.y.atan2(bullet.direction.x) - 3.0 * glm::pi::<f32>() / 2.0;
+                let rotation_angle =
+                    bullet.direction.y.atan2(bullet.direction.x) - 3.0 * glm::pi::<f32>() / 2.0;
                 shell.set_rotation(rotation_angle, glm::vec3(0.0, 0.0, 1.0));
             }
         }
@@ -223,12 +227,18 @@ impl GameMap {
         }
     }
 
-    fn generate_tanks(color_shader: ShaderProgram) -> (HashMap<game::TankID, game::Tank>, HashMap<game::TankID, Tank>) {
+    fn generate_tanks(
+        color_shader: ShaderProgram,
+    ) -> (
+        HashMap<game::TankID, game::Tank>,
+        HashMap<game::TankID, Tank>,
+    ) {
         let mut game_tanks = HashMap::new();
         let mut tanks = HashMap::new();
 
         for i in 0..4 {
-            let relative_pos = glm::vec2(0.25 + 0.5 * (i as f32 / 2.0), 0.25 + 0.5 * (i as f32 % 2.0));
+            let relative_pos =
+                glm::vec2(0.25 + 0.5 * (i as f32 / 2.0), 0.25 + 0.5 * (i as f32 % 2.0));
             let tank = game::Tank::new(i, Self::mul_comp_wise(game::map_size(), relative_pos));
             game_tanks.insert(i, tank);
 

@@ -2,7 +2,6 @@ extern crate nalgebra_glm as glm;
 
 use glm::{pi, rotate_vec2, Vec2, Vec3};
 use std::collections::HashMap;
-use std::os::macos::raw::stat;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
 pub type TankID = i32;
@@ -98,7 +97,7 @@ pub struct Event {
     pub tank_id: i32,
     pub event_type: EventType,
 
-    pub value: f32
+    pub value: f32,
 }
 
 pub struct World {
@@ -125,14 +124,16 @@ impl World {
     fn bullet_collides_map_vertical(bullet: &Bullet) -> bool {
         bullet.pos.y <= 0.0 || bullet.pos.y >= map_size().y
     }
-    
+
     fn bullet_collides_map_horizontal(bullet: &Bullet) -> bool {
         bullet.pos.x <= 0.0 || bullet.pos.x >= map_size().x
     }
 
     fn intersects(tank: &Tank, bullet: &Bullet) -> bool {
-        tank.pos.x < bullet.pos.x && bullet.pos.x < tank.pos.x + tank.size.x &&
-        tank.pos.y < bullet.pos.y && bullet.pos.y < tank.pos.y + tank.size.y
+        tank.pos.x < bullet.pos.x
+            && bullet.pos.x < tank.pos.x + tank.size.x
+            && tank.pos.y < bullet.pos.y
+            && bullet.pos.y < tank.pos.y + tank.size.y
     }
 
     pub fn clamp3(v: Vec3, min: Vec3, max: Vec3) -> Vec3 {
@@ -144,10 +145,7 @@ impl World {
     }
 
     pub fn clamp2(v: Vec2, min: Vec2, max: Vec2) -> Vec2 {
-        Vec2::new(
-            v.x.max(min.x).min(max.x),
-            v.y.max(min.y).min(max.y),
-        )
+        Vec2::new(v.x.max(min.x).min(max.x), v.y.max(min.y).min(max.y))
     }
 
     pub fn get_next_state(&self, mut state: State, events: Vec<Event>) -> State {
@@ -156,23 +154,31 @@ impl World {
                 match event.event_type {
                     EventType::Forward => {
                         tank.pos += tank.wheel_direction * tank.speed;
-                        tank.pos = Self::clamp2(tank.pos, Vec2::new(0.0, 0.0), map_size() - tank.size);
+                        tank.pos =
+                            Self::clamp2(tank.pos, Vec2::new(0.0, 0.0), map_size() - tank.size);
                     }
                     EventType::Backward => {
                         tank.pos -= tank.wheel_direction * tank.speed;
-                        tank.pos = Self::clamp2(tank.pos, Vec2::new(0.0, 0.0), map_size() - tank.size);
+                        tank.pos =
+                            Self::clamp2(tank.pos, Vec2::new(0.0, 0.0), map_size() - tank.size);
                     }
                     EventType::Shoot => {
                         if tank.bullets.len() < MAX_BULLETS as usize {
-                            tank.bullets.push(Bullet::new(Bullet::generate_bullet_id(), tank.pos + tank.gun_direction * 2.0, tank.gun_direction));
+                            tank.bullets.push(Bullet::new(
+                                Bullet::generate_bullet_id(),
+                                tank.pos + tank.gun_direction * 2.0,
+                                tank.gun_direction,
+                            ));
                         }
                     }
                     EventType::RotateWheelsClockwise => {
-                        tank.wheel_direction = rotate_vec2(&tank.wheel_direction, -tank_rotation_speed());
+                        tank.wheel_direction =
+                            rotate_vec2(&tank.wheel_direction, -tank_rotation_speed());
                         tank.gun_direction = tank.wheel_direction;
                     }
                     EventType::RotateWheelsCClockwise => {
-                        tank.wheel_direction = rotate_vec2(&tank.wheel_direction, tank_rotation_speed());
+                        tank.wheel_direction =
+                            rotate_vec2(&tank.wheel_direction, tank_rotation_speed());
                         tank.gun_direction = tank.wheel_direction;
                     }
                     EventType::GunDirection => {
@@ -222,7 +228,12 @@ impl World {
         }
 
         for (tank_id, bullet_id) in dead_bullets {
-            state.tanks.get_mut(&tank_id).unwrap().bullets.remove(bullet_id);
+            state
+                .tanks
+                .get_mut(&tank_id)
+                .unwrap()
+                .bullets
+                .remove(bullet_id);
         }
 
         for dead_tank in dead_tanks {

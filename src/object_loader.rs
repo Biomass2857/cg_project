@@ -1,8 +1,8 @@
 extern crate nalgebra_glm as glm;
 
+use glm::{Vec2, Vec3, Vec4};
 use std::fs::File;
 use std::io::{self, BufRead};
-use glm::{Vec2, Vec3, Vec4};
 
 pub struct ObjMaterial {
     name: String,
@@ -176,20 +176,32 @@ impl ObjectLoader {
         Ok(materials)
     }
 
-    fn parse_vec2<'i, 's, I>(split: &'i mut I) -> Vec2 where I: Iterator<Item = &'s str>, 's: 'i {
+    fn parse_vec2<'i, 's, I>(split: &'i mut I) -> Vec2
+    where
+        I: Iterator<Item = &'s str>,
+        's: 'i,
+    {
         let x = split.next().unwrap().parse().unwrap();
         let y = split.next().unwrap().parse().unwrap();
         Vec2::new(x, y)
     }
 
-    fn parse_vec3<'i, 's, I>(split: &'i mut I) -> Vec3 where I: Iterator<Item = &'s str>, 's: 'i {
+    fn parse_vec3<'i, 's, I>(split: &'i mut I) -> Vec3
+    where
+        I: Iterator<Item = &'s str>,
+        's: 'i,
+    {
         let x = split.next().unwrap().parse().unwrap();
         let y = split.next().unwrap().parse().unwrap();
         let z = split.next().unwrap().parse().unwrap();
         Vec3::new(x, y, z)
     }
 
-    fn parse_vec4<'i, 's, I>(split: &'i mut I) -> Vec4 where I: Iterator<Item = &'s str>, 's: 'i {
+    fn parse_vec4<'i, 's, I>(split: &'i mut I) -> Vec4
+    where
+        I: Iterator<Item = &'s str>,
+        's: 'i,
+    {
         let x = split.next().unwrap().parse().unwrap();
         let y = split.next().unwrap().parse().unwrap();
         let z = split.next().unwrap().parse().unwrap();

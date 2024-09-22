@@ -1,7 +1,7 @@
+use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::{Duration, Instant};
-use std::collections::HashMap;
 
 use crate::game::{self, Event, EventType, State, TankID, World};
 
@@ -27,7 +27,9 @@ impl GameLoop {
             mutex: Arc::new(Mutex::new(())),
             running: Arc::new(Mutex::new(false)),
             thread: None,
-            snapshot: Arc::new(Mutex::new(State { tanks: HashMap::new() })),
+            snapshot: Arc::new(Mutex::new(State {
+                tanks: HashMap::new(),
+            })),
             event_buffer: Arc::new(Mutex::new(HashMap::default())),
         }
     }
@@ -64,7 +66,10 @@ impl GameLoop {
                 last_time = now;
 
                 if time_taken > tick_time {
-                    println!("[GameLoop] Overload! gameloop tick time taken: {}ms", time_taken.as_millis());
+                    println!(
+                        "[GameLoop] Overload! gameloop tick time taken: {}ms",
+                        time_taken.as_millis()
+                    );
                 } else {
                     thread::sleep(tick_time - time_taken);
                 }
@@ -91,7 +96,10 @@ impl GameLoop {
         let _lock = self.mutex.lock().unwrap();
 
         for event in events {
-            let key = EventKey { event_type: event.event_type, tank_id: event.tank_id };
+            let key = EventKey {
+                event_type: event.event_type,
+                tank_id: event.tank_id,
+            };
             self.event_buffer.lock().unwrap().insert(key, event);
         }
     }

@@ -1,9 +1,8 @@
 use std::collections::HashMap;
-use std::path::Path;
 use std::fs::File;
-use std::io::Read;
 use std::io::Error;
-use image::{ImageBuffer, Rgba};
+use std::io::Read;
+use std::path::Path;
 
 use crate::texture::Texture;
 
@@ -42,8 +41,18 @@ impl TextureAtlas {
         let mut textures = HashMap::new();
 
         for config in configuration {
-            let sub_image = image::imageops::crop_imm(&img, config.start_x, config.start_y, config.width, config.height).to_image();
-            textures.insert(config.name, Texture::new(sub_image.to_vec(), config.width, config.height, 4));
+            let sub_image = image::imageops::crop_imm(
+                &img,
+                config.start_x,
+                config.start_y,
+                config.width,
+                config.height,
+            )
+            .to_image();
+            textures.insert(
+                config.name,
+                Texture::new(sub_image.to_vec(), config.width, config.height, 4),
+            );
         }
 
         Ok(Self { textures })

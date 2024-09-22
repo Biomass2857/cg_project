@@ -1,7 +1,7 @@
 extern crate gl;
 
-use std::sync::atomic::{AtomicUsize, Ordering};
 use gl::types::*;
+use std::sync::atomic::{AtomicUsize, Ordering};
 
 #[derive(Copy, Clone)]
 pub struct Texture {
@@ -41,10 +41,7 @@ impl Texture {
             gl::BindTexture(gl::TEXTURE_2D, 0);
         }
 
-        Self {
-            id,
-            slot,
-        }
+        Self { id, slot }
     }
 
     pub fn bind(&self) {

@@ -2,14 +2,14 @@ extern crate gl;
 extern crate nalgebra as na;
 extern crate nalgebra_glm as glm;
 
-use glm::{Mat4, Vec3};
-use gl::types::{GLuint, GLfloat, GLsizeiptr, GLvoid};
+use crate::camera::Camera;
+use crate::object_template::ObjectTemplate;
 use crate::render::Render;
 use crate::shader_program::ShaderProgram;
 use crate::texture::Texture;
-use crate::camera::Camera;
 use crate::vertex_feature::VertexFeature;
-use crate::object_template::ObjectTemplate;
+use gl::types::{GLfloat, GLsizeiptr, GLuint, GLvoid};
+use glm::{Mat4, Vec3};
 
 pub struct Object {
     scaling: Mat4,
@@ -46,7 +46,7 @@ impl Object {
         Self::new(
             object_template.vertices.clone(),
             object_template.indices.clone(),
-            object_template.features.clone()
+            object_template.features.clone(),
         )
     }
 
@@ -57,7 +57,12 @@ impl Object {
 
             gl::GenBuffers(1, &mut self.vbo);
             gl::BindBuffer(gl::ARRAY_BUFFER, self.vbo);
-            gl::BufferData(gl::ARRAY_BUFFER, (vertices.len() * std::mem::size_of::<GLfloat>()) as GLsizeiptr, vertices.as_ptr() as *const GLvoid, gl::STATIC_DRAW);
+            gl::BufferData(
+                gl::ARRAY_BUFFER,
+                (vertices.len() * std::mem::size_of::<GLfloat>()) as GLsizeiptr,
+                vertices.as_ptr() as *const GLvoid,
+                gl::STATIC_DRAW,
+            );
 
             let stride: u16 = features.iter().map(|feature| feature.size()).sum();
 
@@ -65,14 +70,26 @@ impl Object {
             for feature in &features {
                 let size = feature.size();
                 gl::EnableVertexAttribArray(*feature as GLuint);
-                gl::VertexAttribPointer(*feature as GLuint, size as i32, gl::FLOAT, gl::FALSE, (stride * std::mem::size_of::<GLfloat>() as u16) as i32, (initial_offset * std::mem::size_of::<GLfloat>() as u16) as *const GLvoid);
+                gl::VertexAttribPointer(
+                    *feature as GLuint,
+                    size as i32,
+                    gl::FLOAT,
+                    gl::FALSE,
+                    (stride * std::mem::size_of::<GLfloat>() as u16) as i32,
+                    (initial_offset * std::mem::size_of::<GLfloat>() as u16) as *const GLvoid,
+                );
                 initial_offset += size;
             }
 
             self.index_count = indices.len();
             gl::GenBuffers(1, &mut self.ibo);
             gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, self.ibo);
-            gl::BufferData(gl::ELEMENT_ARRAY_BUFFER, (self.index_count * std::mem::size_of::<u32>()) as GLsizeiptr, indices.as_ptr() as *const GLvoid, gl::STATIC_DRAW);
+            gl::BufferData(
+                gl::ELEMENT_ARRAY_BUFFER,
+                (self.index_count * std::mem::size_of::<u32>()) as GLsizeiptr,
+                indices.as_ptr() as *const GLvoid,
+                gl::STATIC_DRAW,
+            );
 
             self.texture_enabled = features.contains(&VertexFeature::UV);
         }
@@ -125,9 +142,17 @@ impl Render for Object {
                 }
 
                 shader.set_matrix4("camMatrix", &camera.get_matrix());
-                shader.set_matrix4("modelview", &(self.translation * self.rotation * self.scaling));
+                shader.set_matrix4(
+                    "modelview",
+                    &(self.translation * self.rotation * self.scaling),
+                );
 
-                gl::DrawElements(gl::TRIANGLES, self.index_count as i32, gl::UNSIGNED_INT, std::ptr::null());
+                gl::DrawElements(
+                    gl::TRIANGLES,
+                    self.index_count as i32,
+                    gl::UNSIGNED_INT,
+                    std::ptr::null(),
+                );
             }
 
             gl::BindVertexArray(0);

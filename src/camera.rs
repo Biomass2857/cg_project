@@ -22,7 +22,14 @@ pub struct Camera {
 }
 
 impl Camera {
-    pub fn new(width: i32, height: i32, position: Vec3, fov_deg: f32, near_plane: f32, far_plane: f32) -> Camera {
+    pub fn new(
+        width: i32,
+        height: i32,
+        position: Vec3,
+        fov_deg: f32,
+        near_plane: f32,
+        far_plane: f32,
+    ) -> Camera {
         Camera {
             position,
             orientation: Vec3::new(0.0, 0.0, -1.0),
@@ -41,9 +48,18 @@ impl Camera {
     }
 
     pub fn get_matrix(&self) -> Mat4 {
-        let view = glm::look_at(&self.position, &(self.position + self.orientation), &self.up);
-        let projection = glm::perspective(self.fov_deg.to_radians(), self.width as f32 / self.height as f32, self.near_plane, self.far_plane);
-        
+        let view = glm::look_at(
+            &self.position,
+            &(self.position + self.orientation),
+            &self.up,
+        );
+        let projection = glm::perspective(
+            self.fov_deg.to_radians(),
+            self.width as f32 / self.height as f32,
+            self.near_plane,
+            self.far_plane,
+        );
+
         projection * view
     }
 
@@ -59,7 +75,9 @@ impl Camera {
             }
 
             if input.virtual_keycode == Some(glutin::event::VirtualKeyCode::A) {
-                self.position += self.current_speed * time_step * -glm::normalize(&glm::cross::<f32, glm::U3>(&self.orientation, &self.up));
+                self.position += self.current_speed
+                    * time_step
+                    * -glm::normalize(&glm::cross::<f32, glm::U3>(&self.orientation, &self.up));
             }
 
             if input.virtual_keycode == Some(glutin::event::VirtualKeyCode::S) {
@@ -67,7 +85,9 @@ impl Camera {
             }
 
             if input.virtual_keycode == Some(glutin::event::VirtualKeyCode::D) {
-                self.position += self.current_speed * time_step * glm::normalize(&glm::cross::<f32, glm::U3>(&self.orientation, &self.up));
+                self.position += self.current_speed
+                    * time_step
+                    * glm::normalize(&glm::cross::<f32, glm::U3>(&self.orientation, &self.up));
             }
 
             if input.virtual_keycode == Some(glutin::event::VirtualKeyCode::Space) {
@@ -86,7 +106,10 @@ impl Camera {
 
             if self.first_click {
                 window
-                    .set_cursor_position(glutin::dpi::PhysicalPosition::new(self.width / 2, self.height / 2))
+                    .set_cursor_position(glutin::dpi::PhysicalPosition::new(
+                        self.width / 2,
+                        self.height / 2,
+                    ))
                     .unwrap();
 
                 self.first_click = false;
@@ -96,17 +119,24 @@ impl Camera {
             let mouse_x = mouse_position.x as f32;
             let mouse_y = mouse_position.y as f32;
 
-            let rot_x = time_step * self.sensitivity * (mouse_y - self.height as f32 / 2.0) / self.height as f32;
-            let rot_y = time_step * self.sensitivity * (mouse_x - self.width as f32 / 2.0) / self.width as f32;
+            let rot_x = time_step * self.sensitivity * (mouse_y - self.height as f32 / 2.0)
+                / self.height as f32;
+            let rot_y = time_step * self.sensitivity * (mouse_x - self.width as f32 / 2.0)
+                / self.width as f32;
 
-            let rot_matrix =
-                glm::rotate(&Mat4::identity(), -rot_x.to_radians(), &glm::normalize(&glm::cross::<f32, glm::U3>(&self.orientation, &self.up)));
-            
+            let rot_matrix = glm::rotate(
+                &Mat4::identity(),
+                -rot_x.to_radians(),
+                &glm::normalize(&glm::cross::<f32, glm::U3>(&self.orientation, &self.up)),
+            );
+
             let new_orientation = glm::mat4_to_mat3(&rot_matrix) * self.orientation;
 
             let degress: f32 = 90.0;
             let orientation_threshhold_degrees: f32 = 85.0;
-            if (glm::angle(&new_orientation, &self.up) - degress.to_radians()).abs() <= orientation_threshhold_degrees.to_radians() {
+            if (glm::angle(&new_orientation, &self.up) - degress.to_radians()).abs()
+                <= orientation_threshhold_degrees.to_radians()
+            {
                 self.orientation = new_orientation;
             }
 
@@ -114,7 +144,10 @@ impl Camera {
             self.orientation = glm::mat4_to_mat3(&rot_matrix) * self.orientation;
 
             window
-                .set_cursor_position(glutin::dpi::PhysicalPosition::new(self.width / 2, self.height / 2))
+                .set_cursor_position(glutin::dpi::PhysicalPosition::new(
+                    self.width / 2,
+                    self.height / 2,
+                ))
                 .unwrap();
         }
     }

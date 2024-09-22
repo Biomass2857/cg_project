@@ -1,15 +1,15 @@
 extern crate glutin;
 extern crate nalgebra_glm as glm;
 
-use std::ptr;
 use gl::types::*;
 use std::ffi::CString;
+use std::ptr;
 use std::str;
 
 use glm::Mat4;
 
-use crate::texture::Texture;
 use crate::shader::Shader;
+use crate::texture::Texture;
 
 #[derive(Clone, Copy)]
 pub struct ShaderProgram {
@@ -30,8 +30,16 @@ impl ShaderProgram {
             info_log.set_len(512 - 1); // subtract 1 to skip the trailing null character
             gl::GetProgramiv(id, gl::LINK_STATUS, &mut success);
             if success != gl::TRUE as GLint {
-                gl::GetProgramInfoLog(id, 512, ptr::null_mut(), info_log.as_mut_ptr() as *mut GLchar);
-                println!("ERROR::PROGRAM::LINKING_FAILED\n{}", str::from_utf8(&info_log).unwrap());
+                gl::GetProgramInfoLog(
+                    id,
+                    512,
+                    ptr::null_mut(),
+                    info_log.as_mut_ptr() as *mut GLchar,
+                );
+                println!(
+                    "ERROR::PROGRAM::LINKING_FAILED\n{}",
+                    str::from_utf8(&info_log).unwrap()
+                );
             }
             id
         };

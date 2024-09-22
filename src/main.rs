@@ -1,33 +1,33 @@
 extern crate glutin;
 extern crate nalgebra_glm as glm;
 
-use std::time::Instant;
+use glutin::dpi::LogicalSize;
 use glutin::event::{Event, WindowEvent};
 use glutin::event_loop::{ControlFlow, EventLoop};
 use glutin::window::WindowBuilder;
 use glutin::ContextBuilder;
-use glutin::dpi::LogicalSize;
+use std::time::Instant;
 
+mod camera;
+mod game;
+mod game_objects;
+mod gameloop;
+mod object;
+mod object_loader;
+mod object_template;
+mod render;
 mod shader;
 mod shader_program;
 mod texture;
 mod texture_atlas;
-mod object;
 mod vertex_feature;
-mod object_template;
-mod camera;
-mod render;
-mod object_loader;
-mod game_objects;
-mod game;
-mod gameloop;
 
-use crate::texture_atlas::TextureAtlas;
-use crate::texture_atlas::TextureConfiguration;
+use crate::camera::Camera;
 use crate::shader::Shader;
 use crate::shader::ShaderType;
 use crate::shader_program::ShaderProgram;
-use crate::camera::Camera;
+use crate::texture_atlas::TextureAtlas;
+use crate::texture_atlas::TextureConfiguration;
 
 use crate::game_objects::gamemap::GameMap;
 
@@ -39,7 +39,7 @@ fn main() -> Result<(), std::io::Error> {
     let wb = WindowBuilder::new()
         .with_title("Wii Tanks!")
         .with_inner_size(LogicalSize::new(WINDOW_WIDTH, WINDOW_HEIGHT));
-    
+
     let windowed_context = ContextBuilder::new().build_windowed(wb, &el).unwrap();
     let windowed_context = unsafe { windowed_context.make_current().unwrap() };
 
@@ -51,21 +51,37 @@ fn main() -> Result<(), std::io::Error> {
     let texture_configurations = vec![
         TextureConfiguration::new("floor_dark".to_string(), 5, 276, 1024, 512),
         TextureConfiguration::new("floor_light".to_string(), 5, 276 + 1024 + 5, 1024, 512),
-        TextureConfiguration::new("box_texture_light".to_string(), 902, 207, 64, 64)
+        TextureConfiguration::new("box_texture_light".to_string(), 902, 207, 64, 64),
     ];
 
-    let texture_atlas = TextureAtlas::new("../../assets/wii/tanks_environment_texture_atlas.png".to_string(), texture_configurations)?;
-    let default_vertex_shader = Shader::new("../../shader/default/default", ShaderType::Vertex);
-    let default_fragment_shader = Shader::new("../../shader/default/default", ShaderType::Fragment);
-    let default_shader_program = ShaderProgram::new(vec![default_vertex_shader, default_fragment_shader]);
+    let texture_atlas = TextureAtlas::new(
+        "./assets/wii/tanks_environment_texture_atlas.png".to_string(),
+        texture_configurations,
+    )?;
+    let default_vertex_shader = Shader::new("./shader/default/default", ShaderType::Vertex);
+    let default_fragment_shader = Shader::new("./shader/default/default", ShaderType::Fragment);
+    let default_shader_program =
+        ShaderProgram::new(vec![default_vertex_shader, default_fragment_shader]);
     default_shader_program.use_program();
 
-    let texture_vertex_shader = Shader::new("../../shader/texture/texture", ShaderType::Vertex);
-    let texture_fragment_shader = Shader::new("../../shader/texture/texture", ShaderType::Fragment);
-    let texture_shader_program = ShaderProgram::new(vec![texture_vertex_shader, texture_fragment_shader]);
-    
-    let mut game_map = GameMap::new(texture_atlas, default_shader_program, texture_shader_program);
-    let mut camera = Camera::new(WINDOW_WIDTH, WINDOW_HEIGHT, glm::Vec3::new(0.0, 0.0, 2.0), 45.0, 0.1, 100.0);
+    let texture_vertex_shader = Shader::new("./shader/texture/texture", ShaderType::Vertex);
+    let texture_fragment_shader = Shader::new("./shader/texture/texture", ShaderType::Fragment);
+    let texture_shader_program =
+        ShaderProgram::new(vec![texture_vertex_shader, texture_fragment_shader]);
+
+    let mut game_map = GameMap::new(
+        texture_atlas,
+        default_shader_program,
+        texture_shader_program,
+    );
+    let mut camera = Camera::new(
+        WINDOW_WIDTH,
+        WINDOW_HEIGHT,
+        glm::Vec3::new(0.0, 0.0, 2.0),
+        45.0,
+        0.1,
+        100.0,
+    );
 
     let mut left_mouse_key_pressed = false;
     let mut delta_time = 0.0;
@@ -83,7 +99,7 @@ fn main() -> Result<(), std::io::Error> {
                         } else {
                             left_mouse_key_pressed = false;
                         }
-                    },
+                    }
                     _ => (),
                 },
                 WindowEvent::KeyboardInput { .. } => {
@@ -98,12 +114,12 @@ fn main() -> Result<(), std::io::Error> {
 
                         game_map.get_input(&event);
                     }
-                },
+                }
                 _ => (),
             },
             Event::MainEventsCleared => {
                 windowed_context.window().request_redraw();
-            },
+            }
             Event::RedrawRequested(_) => {
                 unsafe {
                     gl::ClearColor(0.2, 0.0, 0.3, 1.0);
@@ -119,7 +135,7 @@ fn main() -> Result<(), std::io::Error> {
                 game_map.render(&camera);
 
                 windowed_context.swap_buffers().unwrap();
-            },
+            }
             _ => (),
         }
     });

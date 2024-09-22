@@ -11,8 +11,12 @@ pub struct Shell {
 impl Shell {
     pub fn new() -> Self {
         let shell_template = ObjectTemplate::new(
-            "../../assets/Shell/shell.obj",
-            vec![VertexFeature::Position, VertexFeature::Normal, VertexFeature::Color],
+            "./assets/Shell/shell.obj",
+            vec![
+                VertexFeature::Position,
+                VertexFeature::Normal,
+                VertexFeature::Color,
+            ],
             0.05,
         );
 

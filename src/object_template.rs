@@ -1,6 +1,6 @@
-use std::vec::Vec;
-use crate::vertex_feature::VertexFeature;
 use crate::object_loader::ObjectLoader;
+use crate::vertex_feature::VertexFeature;
+use std::vec::Vec;
 
 pub struct ObjectTemplate {
     pub vertices: Vec<f32>,
@@ -9,11 +9,7 @@ pub struct ObjectTemplate {
 }
 
 impl ObjectTemplate {
-    pub fn new(
-        obj_file_path: &str,
-        features: Vec<VertexFeature>,
-        scale_on_load: f32,
-    ) -> Self {
+    pub fn new(obj_file_path: &str, features: Vec<VertexFeature>, scale_on_load: f32) -> Self {
         let mut vertices = Vec::new();
         let mut indices = Vec::new();
         let loader = ObjectLoader::new(obj_file_path).unwrap();
