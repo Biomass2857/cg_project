@@ -108,3 +108,9 @@ impl GameLoop {
         self.snapshot.lock().unwrap().clone()
     }
 }
+
+impl Drop for GameLoop {
+    fn drop(&mut self) {
+        self.stop();
+    }
+}

@@ -1,8 +1,8 @@
 extern crate glutin;
 extern crate nalgebra_glm as glm;
 
-use glm::{mat4_to_mat3, Mat3, Mat4, Vec3};
-use glutin::event::WindowEvent;
+use glm::{Mat4, Vec3};
+use glutin::event::{MouseButton, WindowEvent};
 
 #[derive(Clone, Copy)]
 pub struct Camera {
@@ -102,6 +102,12 @@ impl Camera {
                 self.current_speed = self.fast_move_speed;
             } else {
                 self.current_speed = self.slow_move_speed;
+            }
+        }
+
+        if let WindowEvent::MouseInput { button, .. } = window_event {
+            if !matches!(button, MouseButton::Right) {
+                return;
             }
 
             if self.first_click {

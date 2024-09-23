@@ -22,7 +22,6 @@ pub const CUBE_WIDTH: f32 = 1.0;
 
 pub struct GameMap {
     size: glm::Vec2,
-    box_width: f32,
     color_shader: ShaderProgram,
     texture_shader: ShaderProgram,
     atlas: TextureAtlas,
@@ -69,7 +68,6 @@ impl GameMap {
             color_shader,
             texture_shader,
             game_loop,
-            box_width: 1.0,
             size: glm::vec2(20.0, 20.0),
             tanks: graphic_tanks,
             shells: HashMap::new(),
@@ -145,6 +143,8 @@ impl GameMap {
     }
 
     fn preprare_show_state(&mut self, state: game::State) {
+        self.generate_wall();
+
         for tank_pair in &state.tanks {
             let state_tank_id = tank_pair.0;
             let state_tank = tank_pair.1;
