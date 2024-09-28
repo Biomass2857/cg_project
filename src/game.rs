@@ -180,9 +180,10 @@ impl World {
                         tank.wheel_direction =
                             rotate_vec2(&tank.wheel_direction, tank_rotation_speed());
                         tank.gun_direction = tank.wheel_direction;
-                    } /* EventType::GunDirection => {
-                          tank.gun_direction = Vec2::new(event.value.cos(), event.value.sin());
-                      } */
+                    } 
+                    /* EventType::GunDirection => {
+                        tank.gun_direction = Vec2::new(event.value.cos(), event.value.sin());
+                    } */
                 }
             }
         }

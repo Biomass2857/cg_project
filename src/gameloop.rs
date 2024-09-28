@@ -66,10 +66,10 @@ impl GameLoop {
                 last_time = now;
 
                 if time_taken > tick_time {
-                    println!(
-                        "[GameLoop] Overload! gameloop tick time taken: {}ms",
-                        time_taken.as_millis()
-                    );
+                    // println!(
+                    //     "[GameLoop] Overload! gameloop tick time taken: {}ms",
+                    //     time_taken.as_millis()
+                    // );
                 } else {
                     thread::sleep(tick_time - time_taken);
                 }

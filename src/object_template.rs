@@ -1,5 +1,7 @@
 use crate::object_loader::ObjectLoader;
 use crate::vertex_feature::VertexFeature;
+use core::str;
+use std::process::Command;
 use std::vec::Vec;
 
 pub struct ObjectTemplate {
@@ -12,6 +14,12 @@ impl ObjectTemplate {
     pub fn new(obj_file_path: &str, features: Vec<VertexFeature>, scale_on_load: f32) -> Self {
         let mut vertices = Vec::new();
         let mut indices = Vec::new();
+        println!("try load {}", obj_file_path);
+        let output = Command::new("pwd")
+        .output()
+        .expect("couldn't execute PWD");
+
+        println!("pwd={}", str::from_utf8(&output.stdout).unwrap());
         let loader = ObjectLoader::new(obj_file_path).unwrap();
 
         let position_enabled = features.contains(&VertexFeature::Position);

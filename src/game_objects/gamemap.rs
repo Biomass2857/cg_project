@@ -209,7 +209,7 @@ impl GameMap {
     }
 
     fn generate_wall(&mut self) {
-        let cube_texture = self.atlas.get_texture("cube_texture_light").unwrap();
+        let cube_texture = self.atlas.get_texture("box_texture_light").unwrap();
 
         let block_count_x = (self.size.x / CUBE_WIDTH) as u32;
         let block_count_y = (self.size.y / CUBE_WIDTH) as u32;
