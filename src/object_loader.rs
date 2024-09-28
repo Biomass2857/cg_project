@@ -68,11 +68,11 @@ impl ObjectLoader {
                     let normal = Self::parse_vec3(&mut split);
                     normals.push(normal);
                 }
-                Some("mtllib") => {
-                    let material_path = split.next().unwrap();
-                    let lib_materials = Self::read_materials(material_path)?;
-                    materials.extend(lib_materials);
-                }
+                // Some("mtllib") => {
+                //     let material_path = split.next().unwrap();
+                //     let lib_materials = Self::read_materials(material_path)?;
+                //     materials.extend(lib_materials);
+                // }
                 _ => {}
             }
         }
