@@ -4,6 +4,8 @@ extern crate nalgebra_glm as glm;
 use glm::{Mat4, Vec3};
 use glutin::event::{MouseButton, WindowEvent};
 
+use crate::input_state::InputState;
+
 #[derive(Clone, Copy)]
 pub struct Camera {
     pub position: Vec3,
@@ -66,50 +68,44 @@ impl Camera {
     pub fn get_key_input(
         &mut self,
         window: &glutin::window::Window,
-        window_event: &WindowEvent,
+        input_state: &InputState,
         time_step: f32,
     ) {
-        if let WindowEvent::KeyboardInput { input, .. } = window_event {
-            if input.virtual_keycode == Some(glutin::event::VirtualKeyCode::W) {
-                self.position += self.current_speed * time_step * self.orientation;
-            }
-
-            if input.virtual_keycode == Some(glutin::event::VirtualKeyCode::A) {
-                self.position += self.current_speed
-                    * time_step
-                    * -glm::normalize(&glm::cross::<f32, glm::U3>(&self.orientation, &self.up));
-            }
-
-            if input.virtual_keycode == Some(glutin::event::VirtualKeyCode::S) {
-                self.position += self.current_speed * time_step * -self.orientation;
-            }
-
-            if input.virtual_keycode == Some(glutin::event::VirtualKeyCode::D) {
-                self.position += self.current_speed
-                    * time_step
-                    * glm::normalize(&glm::cross::<f32, glm::U3>(&self.orientation, &self.up));
-            }
-
-            if input.virtual_keycode == Some(glutin::event::VirtualKeyCode::Space) {
-                self.position += self.current_speed * time_step * self.up;
-            }
-
-            if input.virtual_keycode == Some(glutin::event::VirtualKeyCode::LControl) {
-                self.position += self.current_speed * time_step * -self.up;
-            }
-
-            if input.virtual_keycode == Some(glutin::event::VirtualKeyCode::LShift) {
-                self.current_speed = self.fast_move_speed;
-            } else {
-                self.current_speed = self.slow_move_speed;
-            }
+        if input_state.is_key_pressed(&glutin::event::VirtualKeyCode::W) {
+            self.position += self.current_speed * time_step * self.orientation;
         }
 
-        if let WindowEvent::MouseInput { button, .. } = window_event {
-            if !matches!(button, MouseButton::Right) {
-                return;
-            }
+        if input_state.is_key_pressed(&glutin::event::VirtualKeyCode::A) {
+            self.position += self.current_speed
+                * time_step
+                * -glm::normalize(&glm::cross::<f32, glm::U3>(&self.orientation, &self.up));
+        }
 
+        if input_state.is_key_pressed(&glutin::event::VirtualKeyCode::S) {
+            self.position += self.current_speed * time_step * -self.orientation;
+        }
+
+        if input_state.is_key_pressed(&glutin::event::VirtualKeyCode::D) {
+            self.position += self.current_speed
+                * time_step
+                * glm::normalize(&glm::cross::<f32, glm::U3>(&self.orientation, &self.up));
+        }
+
+        if input_state.is_key_pressed(&glutin::event::VirtualKeyCode::Space) {
+            self.position += self.current_speed * time_step * self.up;
+        }
+
+        if input_state.is_key_pressed(&glutin::event::VirtualKeyCode::LControl) {
+            self.position += self.current_speed * time_step * -self.up;
+        }
+
+        if input_state.is_key_pressed(&glutin::event::VirtualKeyCode::LShift) {
+            self.current_speed = self.fast_move_speed;
+        } else {
+            self.current_speed = self.slow_move_speed;
+        }
+
+        if input_state.is_mousebutton_pressed(&MouseButton::Right) {
             if self.first_click {
                 window
                     .set_cursor_position(glutin::dpi::PhysicalPosition::new(

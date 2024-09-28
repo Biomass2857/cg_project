@@ -1,13 +1,12 @@
 extern crate glutin;
 extern crate nalgebra_glm as glm;
 
-use glutin::event::WindowEvent;
-
 use std::collections::HashMap;
 
 use crate::camera::Camera;
 use crate::game;
 use crate::gameloop::GameLoop;
+use crate::input_state::InputState;
 use crate::object::Object;
 use crate::render::Render;
 use crate::shader_program::ShaderProgram;
@@ -60,9 +59,9 @@ impl GameMap {
         let initial_state = game::State { tanks: game_tanks };
         let mut game_loop = GameLoop::new();
 
-        game_loop.start(initial_state);
+        // game_loop.start(initial_state);
 
-        Self {
+        let mut new_game_map = Self {
             floor,
             atlas,
             color_shader,
@@ -73,51 +72,53 @@ impl GameMap {
             shells: HashMap::new(),
             cubes: Vec::new(),
             space_pressed: false,
-        }
+        };
+
+        new_game_map.generate_wall();
+
+        new_game_map
     }
 
-    pub fn get_input(&mut self, window_event: &glutin::event::WindowEvent) {
-        if let WindowEvent::KeyboardInput { input, .. } = window_event {
-            let mut event = game::Event {
-                tank_id: 0,
-                event_type: game::EventType::Forward,
-                value: 0.0,
-            };
+    pub fn get_input(&mut self, input_state: &InputState) {
+        let mut event = game::Event {
+            tank_id: 0,
+            event_type: game::EventType::Forward,
+            value: 0.0,
+        };
 
-            if input.virtual_keycode == Some(glutin::event::VirtualKeyCode::W) {
-                event.event_type = game::EventType::Forward;
+        if input_state.is_key_pressed(&glutin::event::VirtualKeyCode::W) {
+            event.event_type = game::EventType::Forward;
+            self.game_loop.accumulate_events(vec![event.clone()]);
+        }
+
+        if input_state.is_key_pressed(&glutin::event::VirtualKeyCode::S) {
+            event.event_type = game::EventType::Backward;
+            self.game_loop.accumulate_events(vec![event.clone()]);
+        }
+
+        if input_state.is_key_pressed(&glutin::event::VirtualKeyCode::A) {
+            event.event_type = game::EventType::RotateWheelsCClockwise;
+            self.game_loop.accumulate_events(vec![event.clone()]);
+        }
+
+        if input_state.is_key_pressed(&glutin::event::VirtualKeyCode::D) {
+            event.event_type = game::EventType::RotateWheelsClockwise;
+            self.game_loop.accumulate_events(vec![event.clone()]);
+        }
+
+        if input_state.is_key_pressed(&glutin::event::VirtualKeyCode::Space) {
+            if !self.space_pressed {
+                event.event_type = game::EventType::Shoot;
                 self.game_loop.accumulate_events(vec![event.clone()]);
+                self.space_pressed = true;
             }
-
-            if input.virtual_keycode == Some(glutin::event::VirtualKeyCode::S) {
-                event.event_type = game::EventType::Backward;
-                self.game_loop.accumulate_events(vec![event.clone()]);
-            }
-
-            if input.virtual_keycode == Some(glutin::event::VirtualKeyCode::A) {
-                event.event_type = game::EventType::RotateWheelsCClockwise;
-                self.game_loop.accumulate_events(vec![event.clone()]);
-            }
-
-            if input.virtual_keycode == Some(glutin::event::VirtualKeyCode::D) {
-                event.event_type = game::EventType::RotateWheelsClockwise;
-                self.game_loop.accumulate_events(vec![event.clone()]);
-            }
-
-            if input.virtual_keycode == Some(glutin::event::VirtualKeyCode::Space) {
-                if !self.space_pressed {
-                    event.event_type = game::EventType::Shoot;
-                    self.game_loop.accumulate_events(vec![event.clone()]);
-                    self.space_pressed = true;
-                }
-            } else {
-                self.space_pressed = false;
-            }
+        } else {
+            self.space_pressed = false;
         }
     }
 
     pub fn render(&mut self, camera: &Camera) {
-        self.preprare_show_state(self.game_loop.get_game_snapshot());
+        // self.preprare_show_state(self.game_loop.get_game_snapshot());
 
         self.floor.render(camera);
 
@@ -143,8 +144,6 @@ impl GameMap {
     }
 
     fn preprare_show_state(&mut self, state: game::State) {
-        self.generate_wall();
-
         for tank_pair in &state.tanks {
             let state_tank_id = tank_pair.0;
             let state_tank = tank_pair.1;

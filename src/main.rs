@@ -6,6 +6,7 @@ use glutin::event::{Event, WindowEvent};
 use glutin::event_loop::{ControlFlow, EventLoop};
 use glutin::window::WindowBuilder;
 use glutin::ContextBuilder;
+use input_state::InputState;
 use std::time::Instant;
 
 mod camera;
@@ -21,6 +22,7 @@ mod shader_program;
 mod texture;
 mod texture_atlas;
 mod vertex_feature;
+mod input_state;
 
 use crate::camera::Camera;
 use crate::shader::Shader;
@@ -85,6 +87,8 @@ fn main() -> Result<(), std::io::Error> {
 
     let mut left_mouse_key_pressed = false;
     let mut delta_time = 0.0;
+    
+    let mut input_state = InputState::new();
 
     el.run(move |event, _, control_flow| {
         *control_flow = ControlFlow::Wait;
@@ -92,27 +96,12 @@ fn main() -> Result<(), std::io::Error> {
         match event {
             Event::WindowEvent { event, .. } => match event {
                 WindowEvent::CloseRequested => *control_flow = ControlFlow::Exit,
-                WindowEvent::MouseInput { state, button, .. } => match button {
-                    glutin::event::MouseButton::Left => {
-                        if state == glutin::event::ElementState::Pressed {
-                            left_mouse_key_pressed = true;
-                        } else {
-                            left_mouse_key_pressed = false;
-                        }
-                    }
-                    _ => (),
+                WindowEvent::MouseInput { state, button, .. } => {
+                    input_state.process_event_mouse_button(button, state);
                 },
-                WindowEvent::KeyboardInput { .. } => {
-                    if left_mouse_key_pressed {
-                        let _ = windowed_context.window().set_cursor_grab(true);
-                        windowed_context.window().set_cursor_visible(false);
-
-                        camera.get_key_input(windowed_context.window(), &event, delta_time);
-                    } else {
-                        let _ = windowed_context.window().set_cursor_grab(false);
-                        windowed_context.window().set_cursor_visible(true);
-
-                        game_map.get_input(&event);
+                WindowEvent::KeyboardInput { input, .. } => {
+                    if let Some(key_code) = input.virtual_keycode {
+                        input_state.process_event_key(key_code, input.state);
                     }
                 }
                 _ => (),
@@ -126,9 +115,25 @@ fn main() -> Result<(), std::io::Error> {
                     gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
                 }
 
+                println!("draw");
+
+                if !left_mouse_key_pressed {
+                    let _ = windowed_context.window().set_cursor_grab(true);
+                    windowed_context.window().set_cursor_visible(false);
+
+                    camera.get_key_input(windowed_context.window(), &input_state, delta_time);
+                } else {
+                    let _ = windowed_context.window().set_cursor_grab(false);
+                    windowed_context.window().set_cursor_visible(true);
+
+                    game_map.get_input(&input_state);
+                }
+
                 let new_time = start.elapsed().as_secs_f32();
                 delta_time = new_time - u_time;
                 u_time = new_time;
+
+                println!("delta_time={}", delta_time);
 
                 default_shader_program.set_float("u_time", u_time);
                 texture_shader_program.set_float("u_time", u_time);

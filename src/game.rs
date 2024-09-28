@@ -118,9 +118,7 @@ impl World {
     pub fn get_state(&self) -> &State {
         &self.state
     }
-}
-
-impl World {
+    
     fn bullet_collides_map_vertical(bullet: &Bullet) -> bool {
         bullet.pos.y <= 0.0 || bullet.pos.y >= map_size().y
     }

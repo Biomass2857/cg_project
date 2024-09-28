@@ -35,6 +35,9 @@ impl GameLoop {
     }
 
     pub fn start(&mut self, initial_state: State) {
+        // *self.snapshot.lock().unwrap() = initial_state.clone();
+        // return;
+
         if self.thread.is_some() {
             return;
         }
