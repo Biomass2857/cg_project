@@ -85,7 +85,6 @@ fn main() -> Result<(), std::io::Error> {
         100.0,
     );
 
-    let mut left_mouse_key_pressed = false;
     let mut delta_time = 0.0;
     
     let mut input_state = InputState::new();
@@ -115,9 +114,7 @@ fn main() -> Result<(), std::io::Error> {
                     gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
                 }
 
-                println!("draw");
-
-                if !left_mouse_key_pressed {
+                if input_state.is_mousebutton_pressed(&glutin::event::MouseButton::Left) {
                     let _ = windowed_context.window().set_cursor_grab(true);
                     windowed_context.window().set_cursor_visible(false);
 
@@ -132,8 +129,6 @@ fn main() -> Result<(), std::io::Error> {
                 let new_time = start.elapsed().as_secs_f32();
                 delta_time = new_time - u_time;
                 u_time = new_time;
-
-                println!("delta_time={}", delta_time);
 
                 default_shader_program.set_float("u_time", u_time);
                 texture_shader_program.set_float("u_time", u_time);
