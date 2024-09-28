@@ -11,7 +11,7 @@ pub struct Tank {
 impl Tank {
     pub fn new() -> Self {
         let tank_template = ObjectTemplate::new(
-            "./assets/Sketch_Tank/tank_1.obj",
+            "./assets/tank/tank_1.obj",
             vec![
                 VertexFeature::Position,
                 VertexFeature::Normal,

@@ -11,7 +11,7 @@ pub struct Shell {
 impl Shell {
     pub fn new() -> Self {
         let shell_template = ObjectTemplate::new(
-            "./assets/Sketch_Tank/tank_1.obj",
+            "./assets/shell/shell.obj",
             vec![
                 VertexFeature::Position,
                 VertexFeature::Normal,
