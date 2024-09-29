@@ -1,10 +1,10 @@
 extern crate glutin;
 extern crate nalgebra_glm as glm;
 
-use glutin::dpi::{LogicalSize, PhysicalSize};
+use glutin::dpi::{LogicalPosition, LogicalSize, PhysicalSize};
 use glutin::event::{Event, WindowEvent};
 use glutin::event_loop::{ControlFlow, EventLoop};
-use glutin::window::WindowBuilder;
+use glutin::window::{self, WindowBuilder};
 use glutin::ContextBuilder;
 use input_state::InputState;
 use std::time::Instant;
@@ -88,6 +88,7 @@ fn main() -> Result<(), std::io::Error> {
     let mut delta_time = 0.0;
     
     let mut input_state = InputState::new();
+    let mut cursor_pos = LogicalPosition::<f32>::new(0.0, 0.0);
 
     el.run(move |event, _, control_flow| {
         *control_flow = ControlFlow::Poll;
@@ -102,6 +103,9 @@ fn main() -> Result<(), std::io::Error> {
                     if let Some(key_code) = input.virtual_keycode {
                         input_state.process_event_key(key_code, input.state);
                     }
+                },
+                WindowEvent::CursorMoved { position, .. } => {
+                    cursor_pos = position.to_logical(windowed_context.window().scale_factor());
                 }
                 _ => (),
             },
@@ -110,7 +114,7 @@ fn main() -> Result<(), std::io::Error> {
                     let _ = windowed_context.window().set_cursor_grab(true);
                     windowed_context.window().set_cursor_visible(false);
 
-                    camera.get_key_input(windowed_context.window(), &input_state, delta_time);
+                    camera.get_key_input(windowed_context.window(), &input_state, &cursor_pos, delta_time);
                 } else {
                     let _ = windowed_context.window().set_cursor_grab(false);
                     windowed_context.window().set_cursor_visible(true);

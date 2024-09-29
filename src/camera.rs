@@ -43,7 +43,7 @@ impl Camera {
             slow_move_speed: 10.0,
             fast_move_speed: 40.0,
             current_speed: 10.0,
-            sensitivity: 10.0,
+            sensitivity: 10000.0,
             fov_deg,
             near_plane,
             far_plane,
@@ -70,6 +70,7 @@ impl Camera {
         &mut self,
         window: &glutin::window::Window,
         input_state: &InputState,
+        cursor_pos: &LogicalPosition<f32>,
         time_step: f32,
     ) {
         if input_state.is_key_pressed(&glutin::event::VirtualKeyCode::W) {
@@ -118,13 +119,9 @@ impl Camera {
                 self.first_click = false;
             }
 
-            let mouse_position = window.outer_position().unwrap();
-            let mouse_x = mouse_position.x as f32;
-            let mouse_y = mouse_position.y as f32;
-
-            let rot_x = time_step * self.sensitivity * (mouse_y - self.height as f32 / 2.0)
+            let rot_x = time_step * self.sensitivity * (cursor_pos.y - self.height as f32 / 2.0)
                 / self.height as f32;
-            let rot_y = time_step * self.sensitivity * (mouse_x - self.width as f32 / 2.0)
+            let rot_y = time_step * self.sensitivity * (cursor_pos.x - self.width as f32 / 2.0)
                 / self.width as f32;
 
             let rot_matrix = glm::rotate(
