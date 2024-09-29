@@ -36,12 +36,6 @@ use crate::game_objects::gamemap::GameMap;
 const WINDOW_WIDTH: i32 = 600;
 const WINDOW_HEIGHT: i32 = 600;
 
-fn benchmark<F>(func: F) where F: FnOnce() -> () {
-    let earlier = Instant::now();
-    func();
-    println!("elapsed time {}ms", Instant::now().duration_since(earlier).as_millis())
-}
-
 fn main() -> Result<(), std::io::Error> {
     let el = EventLoop::new();
     let wb = WindowBuilder::new()
