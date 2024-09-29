@@ -3,6 +3,7 @@ extern crate nalgebra_glm as glm;
 
 use glm::{Mat4, Vec3};
 use glutin::event::MouseButton;
+use glutin::dpi::LogicalPosition;
 
 use crate::input_state::InputState;
 
@@ -108,7 +109,7 @@ impl Camera {
         if input_state.is_mousebutton_pressed(&MouseButton::Left) {
             if self.first_click {
                 window
-                    .set_cursor_position(glutin::dpi::PhysicalPosition::new(
+                    .set_cursor_position(LogicalPosition::new(
                         self.width / 2,
                         self.height / 2,
                     ))
@@ -146,7 +147,7 @@ impl Camera {
             self.orientation = glm::mat4_to_mat3(&rot_matrix) * self.orientation;
 
             window
-                .set_cursor_position(glutin::dpi::PhysicalPosition::new(
+                .set_cursor_position(LogicalPosition::new(
                     self.width / 2,
                     self.height / 2,
                 ))

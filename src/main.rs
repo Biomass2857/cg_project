@@ -1,7 +1,7 @@
 extern crate glutin;
 extern crate nalgebra_glm as glm;
 
-use glutin::dpi::LogicalSize;
+use glutin::dpi::{LogicalSize, PhysicalSize};
 use glutin::event::{Event, WindowEvent};
 use glutin::event_loop::{ControlFlow, EventLoop};
 use glutin::window::WindowBuilder;
