@@ -36,13 +36,19 @@ use crate::game_objects::gamemap::GameMap;
 const WINDOW_WIDTH: i32 = 600;
 const WINDOW_HEIGHT: i32 = 600;
 
+fn benchmark<F>(func: F) where F: FnOnce() -> () {
+    let earlier = Instant::now();
+    func();
+    println!("elapsed time {}ms", Instant::now().duration_since(earlier).as_millis())
+}
+
 fn main() -> Result<(), std::io::Error> {
     let el = EventLoop::new();
     let wb = WindowBuilder::new()
         .with_title("Wii Tanks!")
         .with_inner_size(LogicalSize::new(WINDOW_WIDTH, WINDOW_HEIGHT));
 
-    let windowed_context = ContextBuilder::new().build_windowed(wb, &el).unwrap();
+    let windowed_context = ContextBuilder::new().with_vsync(true).build_windowed(wb, &el).unwrap();
     let windowed_context = unsafe { windowed_context.make_current().unwrap() };
 
     gl::load_with(|symbol| windowed_context.get_proc_address(symbol) as *const _);
@@ -90,7 +96,7 @@ fn main() -> Result<(), std::io::Error> {
     let mut input_state = InputState::new();
 
     el.run(move |event, _, control_flow| {
-        *control_flow = ControlFlow::Wait;
+        *control_flow = ControlFlow::Poll;
 
         match event {
             Event::WindowEvent { event, .. } => match event {
@@ -106,14 +112,6 @@ fn main() -> Result<(), std::io::Error> {
                 _ => (),
             },
             Event::MainEventsCleared => {
-                windowed_context.window().request_redraw();
-            }
-            Event::RedrawRequested(_) => {
-                unsafe {
-                    gl::ClearColor(0.2, 0.0, 0.3, 1.0);
-                    gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
-                }
-
                 if input_state.is_mousebutton_pressed(&glutin::event::MouseButton::Left) {
                     let _ = windowed_context.window().set_cursor_grab(true);
                     windowed_context.window().set_cursor_visible(false);
@@ -124,6 +122,11 @@ fn main() -> Result<(), std::io::Error> {
                     windowed_context.window().set_cursor_visible(true);
 
                     game_map.get_input(&input_state);
+                }
+
+                unsafe {
+                    gl::ClearColor(0.2, 0.0, 0.3, 1.0);
+                    gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
                 }
 
                 let new_time = start.elapsed().as_secs_f32();

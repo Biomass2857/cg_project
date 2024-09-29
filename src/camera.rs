@@ -2,7 +2,7 @@ extern crate glutin;
 extern crate nalgebra_glm as glm;
 
 use glm::{Mat4, Vec3};
-use glutin::event::{MouseButton, WindowEvent};
+use glutin::event::MouseButton;
 
 use crate::input_state::InputState;
 
@@ -42,7 +42,7 @@ impl Camera {
             slow_move_speed: 10.0,
             fast_move_speed: 40.0,
             current_speed: 10.0,
-            sensitivity: 10000.0,
+            sensitivity: 10.0,
             fov_deg,
             near_plane,
             far_plane,
@@ -105,7 +105,7 @@ impl Camera {
             self.current_speed = self.slow_move_speed;
         }
 
-        if input_state.is_mousebutton_pressed(&MouseButton::Right) {
+        if input_state.is_mousebutton_pressed(&MouseButton::Left) {
             if self.first_click {
                 window
                     .set_cursor_position(glutin::dpi::PhysicalPosition::new(
@@ -151,6 +151,8 @@ impl Camera {
                     self.height / 2,
                 ))
                 .unwrap();
+        } else {
+            self.first_click = true;
         }
     }
 }
