@@ -73,7 +73,7 @@ impl ShaderProgram {
         let name_c_string = CString::new(name).unwrap();
         unsafe {
             let location = gl::GetUniformLocation(self.id, name_c_string.as_ptr());
-            gl::Uniform1i(location, (texture.slot + 1) as GLint);
+            gl::Uniform1i(location, texture.slot as GLint);
         }
     }
 
