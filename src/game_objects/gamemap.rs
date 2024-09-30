@@ -59,7 +59,7 @@ impl GameMap {
         let initial_state = game::State { tanks: game_tanks };
         let mut game_loop = GameLoop::new();
 
-        // game_loop.start(initial_state);
+        game_loop.start(initial_state);
 
         let mut new_game_map = Self {
             floor,
@@ -118,7 +118,7 @@ impl GameMap {
     }
 
     pub fn render(&mut self, camera: &Camera) {
-        // self.preprare_show_state(self.game_loop.get_game_snapshot());
+        self.preprare_show_state(self.game_loop.get_game_snapshot());
 
         self.floor.render(camera);
 
