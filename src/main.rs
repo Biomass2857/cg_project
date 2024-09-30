@@ -90,6 +90,11 @@ fn main() -> Result<(), std::io::Error> {
     let mut input_state = InputState::new();
     let mut cursor_pos = LogicalPosition::<f32>::new(0.0, 0.0);
 
+    unsafe {
+        gl::Enable(gl::DEPTH_TEST);
+        gl::DepthFunc(gl::LESS);
+    }
+
     el.run(move |event, _, control_flow| {
         *control_flow = ControlFlow::Poll;
 
