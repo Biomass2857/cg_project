@@ -49,6 +49,7 @@ impl GameLoop {
         self.thread = Some(thread::spawn(move || {
             let mut world = World::new(initial_state);
             let mut last_time = Instant::now();
+            let mut slept_before = false;
             let tick_time = Duration::from_secs_f32(1.0 / game::GAME_FREQUENCY);
 
             while *running.lock().unwrap() {
@@ -66,13 +67,16 @@ impl GameLoop {
                 last_time = now;
 
                 if time_taken > tick_time {
-                    println!(
-                        "[GameLoop] Overload! gameloop tick time taken: {}ns",
-                        time_taken.as_nanos()
-                    );
+                    if !slept_before {
+                        println!(
+                            "[GameLoop] Overload! gameloop tick time taken: {}ns",
+                            time_taken.as_nanos()
+                        );
+                    }
+                    slept_before = false;
                 } else {
-                    println!("waiting ...");
                     thread::sleep(tick_time - time_taken);
+                    slept_before = true;
                 }
             }
         }));
