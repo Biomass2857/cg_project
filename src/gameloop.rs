@@ -35,9 +35,6 @@ impl GameLoop {
     }
 
     pub fn start(&mut self, initial_state: State) {
-        // *self.snapshot.lock().unwrap() = initial_state.clone();
-        // return;
-
         if self.thread.is_some() {
             return;
         }
@@ -70,10 +67,11 @@ impl GameLoop {
 
                 if time_taken > tick_time {
                     println!(
-                        "[GameLoop] Overload! gameloop tick time taken: {}ms",
-                        time_taken.as_millis()
+                        "[GameLoop] Overload! gameloop tick time taken: {}ns",
+                        time_taken.as_nanos()
                     );
                 } else {
+                    println!("waiting ...");
                     thread::sleep(tick_time - time_taken);
                 }
             }
