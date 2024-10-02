@@ -4,7 +4,8 @@ extern crate nalgebra_glm as glm;
 use std::collections::HashMap;
 
 use crate::camera::Camera;
-use crate::game;
+use crate::soundmanager::SoundManager;
+use crate::{game, soundmanager};
 use crate::gameloop::GameLoop;
 use crate::input_state::InputState;
 use crate::object::Object;
@@ -24,6 +25,7 @@ pub struct GameMap {
     color_shader: ShaderProgram,
     texture_shader: ShaderProgram,
     atlas: TextureAtlas,
+    sound_manager: SoundManager,
     floor: Object,
     tanks: HashMap<game::TankID, Tank>,
     shells: HashMap<i32, Shell>,
@@ -35,6 +37,7 @@ pub struct GameMap {
 impl GameMap {
     pub fn new(
         atlas: TextureAtlas,
+        sound_manager: SoundManager,
         color_shader: ShaderProgram,
         texture_shader: ShaderProgram,
     ) -> Self {
@@ -64,6 +67,7 @@ impl GameMap {
         let mut new_game_map = Self {
             floor,
             atlas,
+            sound_manager,
             color_shader,
             texture_shader,
             game_loop,
@@ -171,6 +175,7 @@ impl GameMap {
                     shell.set_rotation(90.0_f32.to_radians(), glm::vec3(1.0, 0.0, 0.0));
                     shell.set_shader(self.color_shader);
                     self.shells.insert(bullet.id, shell);
+                    self.sound_manager.play_sound("default_shoot");
                 }
 
                 let shell = self.shells.get_mut(&bullet.id).unwrap();

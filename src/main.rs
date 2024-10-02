@@ -7,6 +7,7 @@ use glutin::event_loop::{ControlFlow, EventLoop};
 use glutin::window::{self, WindowBuilder};
 use glutin::ContextBuilder;
 use input_state::InputState;
+use soundmanager::{SoundDefintion, SoundManager};
 use std::time::Instant;
 
 mod camera;
@@ -23,6 +24,7 @@ mod texture;
 mod texture_atlas;
 mod vertex_feature;
 mod input_state;
+mod soundmanager;
 
 use crate::camera::Camera;
 use crate::shader::Shader;
@@ -71,8 +73,13 @@ fn main() -> Result<(), std::io::Error> {
     let texture_shader_program =
         ShaderProgram::new(vec![texture_vertex_shader, texture_fragment_shader]);
 
+    let sound_manager = SoundManager::new(vec![
+        SoundDefintion::new("default_shoot".to_string(), "./assets/sounds/Tank_Shoot.wav".to_string())
+    ]);
+
     let mut game_map = GameMap::new(
         texture_atlas,
+        sound_manager,
         default_shader_program,
         texture_shader_program,
     );
