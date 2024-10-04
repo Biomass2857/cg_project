@@ -9,19 +9,9 @@ pub struct Shell {
 }
 
 impl Shell {
-    pub fn new() -> Self {
-        let shell_template = ObjectTemplate::new(
-            "./assets/shell/shell.obj",
-            vec![
-                VertexFeature::Position,
-                VertexFeature::Normal,
-                VertexFeature::Color,
-            ],
-            0.05,
-        );
-
+    pub fn new(template: &ObjectTemplate) -> Self {
         Self {
-            object: Object::from_template(&shell_template),
+            object: Object::from_template(&template),
         }
     }
 }

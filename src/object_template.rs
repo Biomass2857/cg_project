@@ -1,4 +1,4 @@
-use crate::object_loader::ObjectLoader;
+use crate::object_loader::{Axis, LoadOptions, ObjectLoader};
 use crate::vertex_feature::VertexFeature;
 use core::str;
 use std::process::Command;
@@ -11,11 +11,11 @@ pub struct ObjectTemplate {
 }
 
 impl ObjectTemplate {
-    pub fn new(obj_file_path: &str, features: Vec<VertexFeature>, scale_on_load: f32) -> Self {
+    pub fn new(obj_file_path: &str, features: Vec<VertexFeature>, scale_options: Option<LoadOptions>) -> Self {
         let mut vertices = Vec::new();
         let mut indices = Vec::new();
 
-        let loader = ObjectLoader::new(obj_file_path).unwrap();
+        let loader = ObjectLoader::new(obj_file_path, scale_options).unwrap();
 
         let position_enabled = features.contains(&VertexFeature::Position);
         let normal_enabled = features.contains(&VertexFeature::Normal);
@@ -26,9 +26,9 @@ impl ObjectTemplate {
             for vertex in face.vertices {
                 if position_enabled {
                     let vertex_index: usize = vertex.vertex_index as usize;
-                    vertices.push(scale_on_load * loader.vertices[vertex_index].x);
-                    vertices.push(scale_on_load * loader.vertices[vertex_index].y);
-                    vertices.push(scale_on_load * loader.vertices[vertex_index].z);
+                    vertices.push(loader.vertices[vertex_index].x);
+                    vertices.push(loader.vertices[vertex_index].y);
+                    vertices.push(loader.vertices[vertex_index].z);
                 }
 
                 let normal_index: usize = vertex.normal_index as usize;

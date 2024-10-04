@@ -1,6 +1,7 @@
 use std::ops::{Deref, DerefMut};
 
 use crate::object::Object;
+use crate::object_loader::LoadOptions;
 use crate::object_template::ObjectTemplate;
 use crate::vertex_feature::VertexFeature;
 
@@ -9,19 +10,9 @@ pub struct Tank {
 }
 
 impl Tank {
-    pub fn new() -> Self {
-        let tank_template = ObjectTemplate::new(
-            "./assets/tank/tank_1.obj",
-            vec![
-                VertexFeature::Position,
-                VertexFeature::Normal,
-                VertexFeature::Color,
-            ],
-            0.05,
-        );
-
+    pub fn new(template: &ObjectTemplate) -> Self {
         Self {
-            object: Object::from_template(&tank_template),
+            object: Object::from_template(&template),
         }
     }
 }

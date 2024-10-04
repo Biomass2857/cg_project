@@ -7,7 +7,11 @@ use glutin::event_loop::{ControlFlow, EventLoop};
 use glutin::window::{self, WindowBuilder};
 use glutin::ContextBuilder;
 use input_state::InputState;
+use object_loader::{Axis, LoadOptions};
+use object_template::ObjectTemplate;
 use soundmanager::{SoundDefintion, SoundManager};
+use vertex_feature::VertexFeature;
+use std::collections::HashMap;
 use std::time::Instant;
 
 mod camera;
@@ -77,12 +81,34 @@ fn main() -> Result<(), std::io::Error> {
         SoundDefintion::new("default_shoot".to_string(), "./assets/sounds/Tank_Shoot.wav".to_string())
     ]);
 
+    let mut object_templates: HashMap<String, ObjectTemplate> = HashMap::new();
+    object_templates.insert("tank".to_string(), ObjectTemplate::new(
+        "./assets/tank/tank_1.obj",
+        vec![
+            VertexFeature::Position,
+            VertexFeature::Normal,
+            VertexFeature::Color,
+        ],
+        Some(LoadOptions::new(Axis::Z, 1.0))
+    ));
+    object_templates.insert("shell".to_string(), ObjectTemplate::new(
+        "./assets/shell/shell.obj",
+        vec![
+            VertexFeature::Position,
+            VertexFeature::Normal,
+            VertexFeature::Color,
+        ],
+        Some(LoadOptions::new(Axis::Z, 0.2))
+    ));
+
     let mut game_map = GameMap::new(
         texture_atlas,
+        object_templates,
         sound_manager,
         default_shader_program,
         texture_shader_program,
     );
+
     let mut camera = Camera::new(
         WINDOW_WIDTH,
         WINDOW_HEIGHT,

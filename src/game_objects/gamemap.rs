@@ -4,8 +4,9 @@ extern crate nalgebra_glm as glm;
 use std::collections::HashMap;
 
 use crate::camera::Camera;
+use crate::object_template::ObjectTemplate;
 use crate::soundmanager::SoundManager;
-use crate::{game, soundmanager};
+use crate::game;
 use crate::gameloop::GameLoop;
 use crate::input_state::InputState;
 use crate::object::Object;
@@ -25,6 +26,7 @@ pub struct GameMap {
     color_shader: ShaderProgram,
     texture_shader: ShaderProgram,
     atlas: TextureAtlas,
+    object_repository: HashMap<String, ObjectTemplate>,
     sound_manager: SoundManager,
     floor: Object,
     tanks: HashMap<game::TankID, Tank>,
@@ -37,6 +39,7 @@ pub struct GameMap {
 impl GameMap {
     pub fn new(
         atlas: TextureAtlas,
+        object_repository: HashMap<String, ObjectTemplate>,
         sound_manager: SoundManager,
         color_shader: ShaderProgram,
         texture_shader: ShaderProgram,
@@ -58,7 +61,7 @@ impl GameMap {
         floor.set_texture(environment_texture);
         floor.set_shader(texture_shader);
 
-        let (game_tanks, graphic_tanks) = Self::generate_tanks(color_shader);
+        let (game_tanks, graphic_tanks) = Self::generate_tanks(&object_repository, color_shader);
         let initial_state = game::State { tanks: game_tanks };
         let mut game_loop = GameLoop::new();
 
@@ -67,6 +70,7 @@ impl GameMap {
         let mut new_game_map = Self {
             floor,
             atlas,
+            object_repository,
             sound_manager,
             color_shader,
             texture_shader,
@@ -171,7 +175,7 @@ impl GameMap {
                 let shell_exists = self.shells.contains_key(&bullet.id);
 
                 if !shell_exists {
-                    let mut shell = Shell::new();
+                    let mut shell = Shell::new(self.object_repository.get("shell").unwrap());
                     shell.set_rotation(90.0_f32.to_radians(), glm::vec3(1.0, 0.0, 0.0));
                     shell.set_shader(self.color_shader);
                     self.shells.insert(bullet.id, shell);
@@ -232,6 +236,7 @@ impl GameMap {
     }
 
     fn generate_tanks(
+        object_repository: &HashMap<String, ObjectTemplate>,
         color_shader: ShaderProgram,
     ) -> (
         HashMap<game::TankID, game::Tank>,
@@ -246,7 +251,7 @@ impl GameMap {
             let tank = game::Tank::new(i, Self::mul_comp_wise(game::map_size(), relative_pos));
             game_tanks.insert(i, tank);
 
-            let mut tank_object = Tank::new();
+            let mut tank_object = Tank::new(object_repository.get("tank").unwrap());
             tank_object.set_shader(color_shader);
             tank_object.scale(0.5);
             tanks.insert(i, tank_object);

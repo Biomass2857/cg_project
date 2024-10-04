@@ -36,11 +36,24 @@ pub struct ObjectLoader {
     pub materials: Vec<ObjMaterial>,
 }
 
+pub enum Axis { X, Y, Z }
+
+pub struct LoadOptions {
+    axis: Axis,
+    expected_length: f32
+}
+
+impl LoadOptions {
+    pub fn new(axis: Axis, length: f32) -> Self {
+        Self { axis: axis, expected_length: length }
+    }
+}
+
 impl ObjectLoader {
-    pub fn new(path: &str) -> io::Result<Self> {
+    pub fn new(path: &str, options: Option<LoadOptions>) -> io::Result<Self> {
         let mut uvs = Vec::new();
         let mut normals = Vec::new();
-        let mut vertices = Vec::new();
+        let mut vertices: Vec<Vec3> = Vec::new();
         let mut faces = Vec::new();
         let mut materials = Vec::new();
 
@@ -77,6 +90,24 @@ impl ObjectLoader {
             }
         }
 
+        let (lower_point, size) = Self::find_bounding_box(&vertices);
+
+        println!("lower_point = {}", lower_point);
+        println!("size = {}", size);
+
+        let ratio = options.map_or(1.0, |options| { 
+            options.expected_length / match options.axis {
+                Axis::X => size.x,
+                Axis::Y => size.y,
+                Axis::Z => size.z,
+            }
+        });
+
+        for vertex in &mut vertices {
+            *vertex -= &lower_point;
+            *vertex *= ratio;
+        }
+
         Ok(Self {
             uvs,
             normals,
@@ -86,7 +117,26 @@ impl ObjectLoader {
         })
     }
 
-    fn parse_face(face_vertices: &[String]) -> ObjectFace {
+    fn find_bounding_box(vertices: &Vec<Vec3>) -> (Vec3, Vec3) {
+        let x_values = vertices.iter().map(|v| v.x);
+        let y_values = vertices.iter().map(|v| v.y);
+        let z_values = vertices.iter().map(|v| v.z);
+
+        let min_x = x_values.clone().reduce(f32::min).unwrap();
+        let min_y = y_values.clone().reduce(f32::min).unwrap();
+        let min_z = z_values.clone().reduce(f32::min).unwrap();
+
+        let max_x = x_values.clone().reduce(f32::max).unwrap();
+        let max_y = y_values.clone().reduce(f32::max).unwrap();
+        let max_z = z_values.clone().reduce(f32::max).unwrap();
+
+        let lower_origin = Vec3::new(min_x, min_y, min_z);
+        let size =Vec3::new(max_x - min_x, max_y - min_y, max_z - min_z);
+        
+        (lower_origin, size)
+    }
+
+    fn parse_face(face_vertices: &Vec<String>) -> ObjectFace {
         let mut face = ObjectFace {
             material_identifier: String::new(),
             vertices: Vec::new(),
