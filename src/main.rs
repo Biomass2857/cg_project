@@ -1,10 +1,10 @@
 extern crate glutin;
 extern crate nalgebra_glm as glm;
 
-use glutin::dpi::{LogicalPosition, LogicalSize, PhysicalSize};
+use glutin::dpi::{LogicalPosition, LogicalSize};
 use glutin::event::{Event, WindowEvent};
 use glutin::event_loop::{ControlFlow, EventLoop};
-use glutin::window::{self, WindowBuilder};
+use glutin::window::WindowBuilder;
 use glutin::ContextBuilder;
 use input_state::InputState;
 use object_loader::{Axis, LoadOptions};
@@ -132,6 +132,10 @@ fn main() -> Result<(), std::io::Error> {
         *control_flow = ControlFlow::Poll;
 
         match event {
+            Event::LoopDestroyed => {
+                default_shader_program.free();
+                texture_shader_program.free();
+            }
             Event::WindowEvent { event, .. } => match event {
                 WindowEvent::CloseRequested => *control_flow = ControlFlow::Exit,
                 WindowEvent::MouseInput { state, button, .. } => {

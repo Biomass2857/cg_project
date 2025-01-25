@@ -55,7 +55,7 @@ impl ObjectLoader {
         let mut normals = Vec::new();
         let mut vertices: Vec<Vec3> = Vec::new();
         let mut faces = Vec::new();
-        let mut materials = Vec::new();
+        let materials = Vec::new();
 
         let file = File::open(path)?;
         let reader = io::BufReader::new(file);

@@ -36,6 +36,6 @@ impl SoundManager {
     }
 
     pub fn play_sound(&mut self, name: &str) {
-        self.audio_manager.play(self.sound_map.get(name).unwrap().clone());
+        let _ = self.audio_manager.play(self.sound_map.get(name).unwrap().clone());
     }
 }

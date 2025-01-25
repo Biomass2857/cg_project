@@ -12,7 +12,7 @@ pub enum ShaderType {
     Fragment,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone)]
 pub struct Shader {
     id: u32,
 }
@@ -73,10 +73,12 @@ impl Shader {
     pub fn id(&self) -> u32 {
         self.id
     }
+}
 
-    pub fn free(&self) {
+impl Drop for Shader {
+    fn drop(&mut self) {
         unsafe {
             gl::DeleteShader(self.id);
-        }
+        }   
     }
 }

@@ -3,7 +3,7 @@ extern crate gl;
 use gl::types::*;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
-#[derive(Copy, Clone)]
+#[derive(Clone, Copy)]
 pub struct Texture {
     id: GLuint,
     pub slot: i32,

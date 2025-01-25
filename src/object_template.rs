@@ -1,7 +1,6 @@
-use crate::object_loader::{Axis, LoadOptions, ObjectLoader};
+use crate::object_loader::{LoadOptions, ObjectLoader};
 use crate::vertex_feature::VertexFeature;
 use core::str;
-use std::process::Command;
 use std::vec::Vec;
 
 pub struct ObjectTemplate {

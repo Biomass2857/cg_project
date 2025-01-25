@@ -61,8 +61,11 @@ impl TextureAtlas {
     pub fn get_texture(&self, name: &str) -> Option<Texture> {
         self.textures.get(name).copied()
     }
+}
 
-    pub fn free(&mut self) {
+impl Drop for TextureAtlas {
+    fn drop(&mut self) {
+        self.textures.values().for_each(|texture| texture.free());
         self.textures.clear();
     }
 }

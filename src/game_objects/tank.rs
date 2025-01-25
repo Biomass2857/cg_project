@@ -1,9 +1,7 @@
 use std::ops::{Deref, DerefMut};
 
 use crate::object::Object;
-use crate::object_loader::LoadOptions;
 use crate::object_template::ObjectTemplate;
-use crate::vertex_feature::VertexFeature;
 
 pub struct Tank {
     object: Object,
