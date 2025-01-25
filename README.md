@@ -10,12 +10,4 @@ brew install glfw
 
 brew install glm
 
-clone project
-
-mkdir build
-
-cmake ..
-
-make
-
-./OpenGLProject
+cargo run
